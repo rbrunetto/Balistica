@@ -104,7 +104,7 @@ input[type=number],input[type=text],select{
   background:#0a0e17;border:1px solid var(--line);border-radius:9px;color:var(--tx);
   font:600 16px/1 inherit;padding:8px 9px;width:100%;font-variant-numeric:tabular-nums
 }
-input[type=number],input.tdist,#bcN{width:82px;text-align:right;flex:0 0 auto}
+input[inputmode=decimal]{width:82px;text-align:right;flex:0 0 auto}
 .tgt input.tdist{width:70px}
 select{background-image:none;padding-right:9px}
 input:focus,select:focus{outline:none;border-color:var(--acc)}
@@ -217,6 +217,29 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
   white-space:pre-wrap;word-break:break-word;max-height:45dvh;overflow:auto
 }
 
+/* ---------- caixa de diálogo ---------- */
+#modal{
+  position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(4,6,11,.72);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  padding:16px calc(16px + env(safe-area-inset-left)) calc(20px + env(safe-area-inset-bottom));
+  animation:mfade .16s ease
+}
+#modal[hidden]{display:none}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+.mbox{
+  width:100%;max-width:430px;background:var(--panel);border:1px solid var(--line);
+  border-radius:18px;padding:18px 17px 15px;box-shadow:0 18px 50px rgba(0,0,0,.65);
+  animation:mup .2s cubic-bezier(.2,.9,.3,1)
+}
+@keyframes mup{from{transform:translateY(14px)}to{transform:translateY(0)}}
+.mttl{font-size:16.5px;font-weight:650;margin-bottom:7px}
+.mmsg{font-size:13.5px;line-height:1.5;color:var(--mu);margin-bottom:13px}
+.mmsg b{color:var(--tx);font-weight:600}
+#mInp{width:100%;margin-bottom:13px;text-align:left}
+.mbtns{display:flex;flex-direction:column;gap:8px}
+.mbtns .btn{width:100%}
+.btn.dgr{background:#3a1720;border-color:#7a2b3a;color:#ffbcc6}
+
 </style>
 </head>
 <body>
@@ -272,7 +295,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld">
           <div class="fhd">
             <span class="nm">Centro do dot acima do <b>eixo do cano</b></span>
-            <input type="number" id="shN" min="0" max="150" step="0.5"><span class="un">mm</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="shN" min="0" max="150"><span class="un">mm</span>
           </div>
           <input type="range" id="shR" min="0" max="150" step="0.5">
           <div class="chips nowrap" id="shChips"></div>
@@ -285,7 +308,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld">
           <div class="fhd">
             <span class="nm">Distância em que a arma está <b>zerada</b></span>
-            <input type="number" id="zN" min="1" max="600" step="1"><span class="un">m</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="zN" min="1" max="600"><span class="un">m</span>
           </div>
           <input type="range" id="zR" min="1" max="300" step="1">
           <div class="chips nowrap" id="zChips"></div>
@@ -298,7 +321,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld">
           <div class="fhd">
             <span class="nm">Distância máxima do gráfico</span>
-            <input type="number" id="rN" min="10" max="600" step="5"><span class="un">m</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="rN" min="10" max="600"><span class="un">m</span>
           </div>
           <input type="range" id="rR" min="10" max="600" step="5">
           <div class="chips nowrap" id="rChips"></div>
@@ -339,7 +362,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld">
           <div class="fhd">
             <span class="nm">Peso do projétil</span>
-            <input type="number" id="grN" min="15" max="800" step="1"><span class="un">gr</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="grN" min="15" max="800"><span class="un">gr</span>
           </div>
           <input type="range" id="grR" min="15" max="300" step="1">
         </div>
@@ -365,14 +388,14 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld" id="fldFps">
           <div class="fhd">
             <span class="nm">Velocidade na boca</span>
-            <input type="number" id="vN" min="200" max="4500" step="5"><span class="un">fps</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="vN" min="200" max="4500"><span class="un">fps</span>
           </div>
           <input type="range" id="vR" min="200" max="4500" step="5">
         </div>
         <div class="fld" id="fldPf" style="display:none">
           <div class="fhd">
             <span class="nm">Fator de potência medido</span>
-            <input type="number" id="pfN" min="40" max="400" step="1"><span class="un">PF</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="pfN" min="40" max="400"><span class="un">PF</span>
           </div>
           <input type="range" id="pfR" min="40" max="400" step="1">
           <p class="note">Fator = peso (gr) × velocidade (fps) ÷ 1000. Informando o fator e o peso, o app calcula a velocidade.</p>
@@ -387,15 +410,15 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
       <div class="grp">
         <h2>Ambiente</h2>
         <div class="fld">
-          <div class="fhd"><span class="nm">Temperatura</span><input type="number" id="tN" min="-10" max="50" step="1"><span class="un">°C</span></div>
+          <div class="fhd"><span class="nm">Temperatura</span><input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="tN" min="-10" max="50"><span class="un">°C</span></div>
           <input type="range" id="tR" min="-10" max="50" step="1">
         </div>
         <div class="fld">
-          <div class="fhd"><span class="nm">Altitude</span><input type="number" id="aN" min="0" max="3000" step="10"><span class="un">m</span></div>
+          <div class="fhd"><span class="nm">Altitude</span><input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="aN" min="0" max="3000"><span class="un">m</span></div>
           <input type="range" id="aR" min="0" max="3000" step="10">
         </div>
         <div class="fld">
-          <div class="fhd"><span class="nm">Umidade</span><input type="number" id="uN" min="0" max="100" step="5"><span class="un">%</span></div>
+          <div class="fhd"><span class="nm">Umidade</span><input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="uN" min="0" max="100"><span class="un">%</span></div>
           <input type="range" id="uR" min="0" max="100" step="5">
         </div>
         <div class="readout">
@@ -413,7 +436,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
         <div class="fld">
           <div class="fhd">
             <span class="nm">Tolerância aceitável <b>acima e abaixo</b> da visada</span>
-            <input type="number" id="tolN" min="1" max="60" step="0.5"><span class="un">± cm</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="tolN" min="1" max="60"><span class="un">± cm</span>
           </div>
           <input type="range" id="tolR" min="1" max="60" step="0.5">
           <div class="chips nowrap" id="tolChips"></div>
@@ -449,6 +472,15 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
     </section>
 
   </main>
+</div>
+
+<div id="modal" hidden>
+  <div class="mbox" id="mBox">
+    <div class="mttl" id="mTtl"></div>
+    <div class="mmsg" id="mMsg"></div>
+    <input type="text" id="mInp" enterkeyhint="done" autocomplete="off" placeholder="ex.: Glock 34 + dot">
+    <div class="mbtns" id="mBtns"></div>
+  </div>
 </div>
 
 <script>
@@ -680,6 +712,205 @@ if (typeof window !== 'undefined') window.BAL = BAL;
 </script>
 <script>
 /* =======================================================
+   DESENHO DA ARMA — silhuetas laterais
+   Sistema local: boca do cano em (0,0), eixo do cano sobre y=0,
+   +x para frente, -y para cima. Tudo é desenhado já rotacionado
+   pelo ângulo do cano na tela, então o cano encosta na linha amarela.
+   ======================================================= */
+(function(){
+'use strict';
+
+// pol = polígono fechado | arc = curva aberta | ell = elipse | ln = linha
+const GUN_ART = {
+  pistola: {
+    len: 70, opticX: -38,
+    parts: [
+      {t:'pol', k:'b', p:[[4,-12],[-56,-12],[-56,4],[-52,4],[-52,14],[-64,47],
+                          [-45,53],[-35,16],[-30,8],[-4,8],[-4,2],[4,2]]},        // contorno
+      {t:'arc', k:'l', p:[[-31,9],[-39,25],[-47,17]]},                            // guarda-mato
+      {t:'pol', k:'d', p:[[-30,-10],[-12,-10],[-12,-4],[-30,-4]]},                // janela de ejeção
+      {t:'ln',  k:'l', p:[[-50,-11],[-50,3]]},
+      {t:'ln',  k:'l', p:[[-46,-11],[-46,3]]},
+      {t:'ln',  k:'l', p:[[-42,-11],[-42,3]]},                                    // estrias
+      {t:'ln',  k:'l', p:[[-38,14],[-40,20]]}                                     // gatilho
+    ]
+  },
+  revolver: {
+    len: 68, opticX: -40,
+    parts: [
+      {t:'pol', k:'b', p:[[4,-8],[-28,-8],[-28,-12],[-50,-12],[-50,6],[-60,38],
+                          [-42,44],[-31,11],[-28,8],[-4,7],[-4,2],[4,2]]},        // contorno
+      {t:'ell', k:'d', p:[[-38,0]], r:[11,10]},                                   // tambor
+      {t:'ln',  k:'l', p:[[-38,-10],[-38,10]]},
+      {t:'pol', k:'l', p:[[-50,-12],[-58,-16],[-53,-8]]},                         // cão
+      {t:'arc', k:'l', p:[[-30,10],[-38,24],[-46,15]]},                           // guarda-mato
+      {t:'ln',  k:'l', p:[[-4,3],[-24,3]]}                                        // vareta
+    ]
+  },
+  pcc: {
+    len: 110, opticX: -60,
+    parts: [
+      {t:'pol', k:'b', p:[[4,-4],[-20,-4],[-20,-9],[-52,-9],[-52,-12],[-82,-12],
+                          [-82,-9],[-106,-6],[-106,10],[-82,12],[-82,6],[-52,6],
+                          [-52,9],[-20,9],[-20,3],[4,3]]},                        // contorno
+      {t:'pol', k:'b', p:[[-74,6],[-84,29],[-70,32],[-62,8]]},                    // punho
+      {t:'pol', k:'d', p:[[-60,6],[-63,41],[-49,43],[-46,8]]},                    // carregador reto 9mm
+      {t:'ln',  k:'l', p:[[-52,-12],[-82,-12]]},                                  // trilho
+      {t:'ln',  k:'l', p:[[-44,-9],[-44,-4]]},
+      {t:'ln',  k:'l', p:[[-34,-9],[-34,-4]]}
+    ]
+  },
+  fuzil: {
+    len: 124, opticX: -66,
+    parts: [
+      {t:'pol', k:'b', p:[[4,-4],[-30,-4],[-30,-9],[-62,-9],[-62,-12],[-92,-12],
+                          [-92,-9],[-119,-6],[-119,10],[-92,12],[-92,6],[-62,6],
+                          [-62,9],[-30,9],[-30,3],[4,3]]},                        // contorno
+      {t:'pol', k:'l', p:[[-15,-4],[-15,-13],[-21,-13],[-21,-4]]},                // massa de mira
+      {t:'pol', k:'b', p:[[-84,6],[-94,29],[-80,32],[-72,8]]},                    // punho
+      {t:'pol', k:'d', p:[[-70,6],[-76,31],[-62,34],[-57,8]]},                    // carregador curvo
+      {t:'ln',  k:'l', p:[[-62,-12],[-92,-12]]},                                  // trilho
+      {t:'ln',  k:'l', p:[[-52,-9],[-52,-4]]},
+      {t:'ln',  k:'l', p:[[-42,-9],[-42,-4]]}
+    ]
+  }
+};
+
+// Miras — desenhadas com o centro óptico na origem local do conjunto
+const SIGHT_ART = {
+  dot: {
+    parts: [
+      {t:'pol', k:'b', p:[[-13,-10],[12,-10],[12,10],[-13,10]]},                  // corpo
+      {t:'pol', k:'c', p:[[9,-8],[12,-8],[12,8],[9,8]]},                          // lente
+      {t:'pol', k:'d', p:[[-9,10],[4,10],[4,17],[-9,17]]},                        // base
+      {t:'ln',  k:'l', p:[[-13,-6],[6,-6]]}
+    ],
+    lens:[4,0]
+  },
+  luneta: {
+    parts: [
+      {t:'pol', k:'b', p:[[-26,-7],[18,-7],[18,7],[-26,7]]},                      // tubo
+      {t:'pol', k:'d', p:[[18,-11],[29,-11],[29,11],[18,11]]},                    // objetiva
+      {t:'pol', k:'d', p:[[-35,-10],[-26,-10],[-26,10],[-35,10]]},                // ocular
+      {t:'pol', k:'d', p:[[-8,-14],[2,-14],[2,-7],[-8,-7]]},                      // torre
+      {t:'pol', k:'d', p:[[-18,7],[-9,7],[-9,16],[-18,16]]},                      // anéis
+      {t:'pol', k:'d', p:[[4,7],[13,7],[13,16],[4,16]]}
+    ],
+    lens:[25,0]
+  },
+  ferro: {
+    parts: [
+      {t:'pol', k:'b', p:[[-6,0],[6,0],[6,9],[-6,9]]},                            // alça
+      {t:'pol', k:'c', p:[[-2,0],[2,0],[2,5],[-2,5]]}                             // entalhe
+    ],
+    lens:null
+  }
+};
+
+const COL = {
+  b:{f:'#26313f', s:'rgba(158,178,208,.85)'},   // corpo
+  d:{f:'#1b2431', s:'rgba(138,158,188,.7)'},    // detalhe
+  l:{s:'rgba(150,170,200,.75)'},                // linha
+  c:{s:'rgba(76,194,255,.9)'}                   // vidro / mira
+};
+
+function run(ctx, parts, lw){
+  parts.forEach(function(pt){
+    const c = COL[pt.k] || COL.b;
+    ctx.lineWidth = lw;
+    if(pt.t==='pol'){
+      ctx.beginPath();
+      pt.p.forEach(function(q,i){ i? ctx.lineTo(q[0],q[1]) : ctx.moveTo(q[0],q[1]); });
+      ctx.closePath();
+      if(c.f){ ctx.fillStyle=c.f; ctx.fill(); }
+      ctx.strokeStyle=c.s; ctx.stroke();
+    } else if(pt.t==='ell'){
+      ctx.beginPath();
+      ctx.ellipse(pt.p[0][0], pt.p[0][1], pt.r[0], pt.r[1], 0, 0, 6.2832);
+      if(c.f){ ctx.fillStyle=c.f; ctx.fill(); }
+      ctx.strokeStyle=c.s; ctx.stroke();
+    } else if(pt.t==='arc'){
+      ctx.beginPath();
+      ctx.moveTo(pt.p[0][0],pt.p[0][1]);
+      ctx.quadraticCurveTo(pt.p[1][0],pt.p[1][1],pt.p[2][0],pt.p[2][1]);
+      ctx.strokeStyle=c.s; ctx.stroke();
+    } else if(pt.t==='ln'){
+      ctx.beginPath();
+      ctx.moveTo(pt.p[0][0],pt.p[0][1]); ctx.lineTo(pt.p[1][0],pt.p[1][1]);
+      ctx.strokeStyle=c.s; ctx.stroke();
+    }
+  });
+}
+
+/**
+ * Desenha a arma inclinada no ângulo do cano na tela.
+ * x0/yBore = boca do cano; yLos = altura da linha de visada;
+ * phi = ângulo do cano NA TELA (rad, positivo = apontando para cima);
+ * maxLen = comprimento máximo em px.
+ * Devolve a posição na tela do centro óptico da mira.
+ */
+function drawGun(ctx, o){
+  const art = GUN_ART[o.gun] || GUN_ART.pistola;
+  const sArt = SIGHT_ART[o.sight] || SIGHT_ART.dot;
+  const s = Math.min(1, (o.maxLen || 74) / art.len);
+  const cos = Math.cos(o.phi), sin = Math.sin(o.phi);
+
+  // A mira fica na posição natural ao longo do cano, mas na ALTURA da linha de
+  // visada — que na tela está esticada pelo exagero vertical. O corpo da arma
+  // continua com proporção real; quem "estica" é só a haste do mount.
+  const ox    = art.opticX * s;
+  const topLy = -9 * s;
+  // encaixe no corpo da arma (topo da caixa da culatra), já rotacionado
+  const baseX = o.x0 + ox * cos + topLy * sin;
+  const baseY = o.yBore - ox * sin + topLy * cos;
+  // mira logo acima do encaixe, na altura da linha de visada => haste vertical
+  const optX  = baseX;
+  const optY  = o.yLos;
+
+  // corpo da arma
+  ctx.save();
+  ctx.translate(o.x0, o.yBore);
+  ctx.rotate(-o.phi);
+  ctx.scale(s, s);
+  ctx.lineJoin = 'round';
+  run(ctx, art.parts, 1.15 / s);
+  ctx.restore();
+
+  // haste do mount (é ela que absorve o exagero da escala vertical)
+  if(Math.abs(baseY - optY) > 2){
+    ctx.beginPath();
+    ctx.moveTo(baseX, baseY);
+    ctx.lineTo(optX, optY + 7 * s);
+    ctx.strokeStyle = 'rgba(138,158,188,.8)';
+    ctx.lineWidth = Math.max(3, 5 * s);
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+  }
+
+  // mira, inclinada junto com a arma
+  ctx.save();
+  ctx.translate(optX, optY);
+  ctx.rotate(-o.phi);
+  ctx.scale(s, s);
+  ctx.lineJoin = 'round';
+  run(ctx, sArt.parts, 1.15 / s);
+  if(sArt.lens){
+    ctx.beginPath();
+    ctx.arc(sArt.lens[0], sArt.lens[1], 2.2, 0, 6.2832);
+    ctx.fillStyle = '#ff5252'; ctx.fill();
+  }
+  ctx.restore();
+
+  return { x: optX, y: optY, scale: s };
+}
+
+window.GUNART = { drawGun: drawGun, GUN_ART: GUN_ART };
+})();
+
+</script>
+<script>
+/* =======================================================
    BALÍSTICA — visão lateral   |  app
    ======================================================= */
 (function(){
@@ -783,7 +1014,7 @@ function recompute(force){
    CANVAS
    ======================================================= */
 const cv = $('#cv'), ctx = cv.getContext('2d');
-let W=0,H=0, PAD={l:34,r:46,t:16,b:24}, VIEW=null;
+let W=0,H=0, PAD={l:80,r:44,t:16,b:24}, VIEW=null;
 
 function fitCanvas(){
   const r = cv.getBoundingClientRect();
@@ -866,9 +1097,20 @@ function draw(){
   const tol = S.tolCm/100;
   const x2p=V.x2p, y2p=V.y2p;
   const L=PAD.l, R=W-PAD.r, T=PAD.t, B=H-PAD.b;
+  const sh=S.shMm/1000, tanA=Math.tan(sol.angle);
+  const x0=x2p(0), yLos=y2p(0), yBore=y2p(-sh);
+  // angulo do cano COMO APARECE NA TELA (a escala vertical e exagerada)
+  const boreEndY = y2p(-sh + tanA*S.range);
+  const phi = Math.atan2(yBore - boreEndY, V.plotW);
 
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#080b12'; ctx.fillRect(0,0,W,H);
+
+  /* --- arma (desenhada antes: fica toda a esquerda de x=0) --- */
+  const gunPx = GUNART.drawGun(ctx, {
+    x0:x0, yBore:yBore, yLos:yLos, phi:phi,
+    gun:S.gun, sight:S.sight, maxLen:PAD.l-5
+  });
 
   /* --- faixa de tolerância --- */
   const ytA=y2p(tol), ytB=y2p(-tol);
@@ -902,7 +1144,6 @@ function draw(){
   ctx.fillText('cm', R+5, T-4);
 
   /* --- eixo do cano (prolongamento) --- */
-  const sh=S.shMm/1000, tanA=Math.tan(sol.angle);
   ctx.save(); ctx.beginPath(); ctx.rect(L,T,R-L,B-T); ctx.clip();
   ctx.setLineDash([1.5,3.5]); ctx.strokeStyle='rgba(255,200,97,.62)'; ctx.lineWidth=1.3;
   ctx.beginPath(); ctx.moveTo(x2p(0), y2p(-sh)); ctx.lineTo(x2p(S.range), y2p(-sh + tanA*S.range)); ctx.stroke();
@@ -910,7 +1151,7 @@ function draw(){
 
   /* --- linha de visada --- */
   ctx.setLineDash([6,4]); ctx.strokeStyle='#4cc2ff'; ctx.lineWidth=1.6;
-  ctx.beginPath(); ctx.moveTo(L,y2p(0)); ctx.lineTo(R,y2p(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(Math.max(2, gunPx.x), yLos); ctx.lineTo(R,yLos); ctx.stroke();
   ctx.setLineDash([]);
 
   /* --- faixa útil --- */
@@ -1018,20 +1259,16 @@ function draw(){
     label(px, py-9, 'ápice '+sg(sol.apex.y*100,1)+' cm', '#b48cff','center', 2, [0,-16,-32,16,32]);
   }
 
-  /* --- esquema da arma --- */
-  const x0=x2p(0), yLos=y2p(0), yBore=y2p(-sh);
-  ctx.strokeStyle='rgba(150,170,200,.6)'; ctx.lineWidth=2.4; ctx.lineCap='round';
-  ctx.beginPath(); ctx.moveTo(x0-26,yBore); ctx.lineTo(x0+3,yBore); ctx.stroke();   // cano
-  ctx.lineWidth=1.8;
-  ctx.beginPath(); ctx.moveTo(x0-17,yLos+4); ctx.lineTo(x0-17,yBore); ctx.stroke(); // mount
-  ctx.lineCap='butt';
-  ctx.fillStyle='#101a2b'; ctx.strokeStyle='rgba(76,194,255,.85)'; ctx.lineWidth=1.4;
-  ctx.beginPath(); ctx.roundRect(x0-26,yLos-6,19,12,3); ctx.fill(); ctx.stroke();   // dot
-  ctx.fillStyle='#ff5252'; ctx.beginPath(); ctx.arc(x0-16.5,yLos,1.8,0,7); ctx.fill();
-  if(Math.abs(yBore-yLos)>26){
-    ctx.strokeStyle='rgba(150,170,200,.5)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(x0-6,yLos+3); ctx.lineTo(x0-6,yBore-3); ctx.stroke();
-    label(x0+4, (yLos+yBore)/2+4, nf(S.shMm,0)+' mm', '#9fb0cc','left', 4, [0,-15,15]);
+  /* --- cota da altura da mira --- */
+  if(Math.abs(yBore-yLos)>24){
+    const cx=x0+7;
+    ctx.strokeStyle='rgba(150,170,200,.55)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,yLos+2); ctx.lineTo(cx,yBore-2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx-3,yLos+6); ctx.lineTo(cx,yLos+2); ctx.lineTo(cx+3,yLos+6);
+    ctx.moveTo(cx-3,yBore-6); ctx.lineTo(cx,yBore-2); ctx.lineTo(cx+3,yBore-6);
+    ctx.stroke();
+    label(cx+5, yLos-7, nf(S.shMm,0)+' mm', '#9fb0cc','left', 4, [0,-15,-30,15]);
   }
 
   flushLabels();
@@ -1303,29 +1540,111 @@ $$('nav button').forEach(b=> b.addEventListener('click', ()=>{
   if(b.dataset.tab==='tab') renderTable();
 }));
 
+/* --- caixa de diálogo --- */
+function ask(o){
+  return new Promise(function(res){
+    const bg=$('#modal'), box=$('#mBox');
+    $('#mTtl').textContent = o.title || '';
+    $('#mMsg').innerHTML   = o.msg || '';
+    $('#mMsg').style.display = o.msg ? '' : 'none';
+    const inp=$('#mInp');
+    inp.style.display = o.input!=null ? '' : 'none';
+    inp.value = o.input || '';
+    $('#mBtns').innerHTML = o.buttons.map(function(b,i){
+      return '<button class="btn '+(b.style||'')+'" data-i="'+i+'">'+b.label+'</button>';
+    }).join('');
+    function done(v){
+      bg.hidden=true; box.onclick=null; bg.onclick=null;
+      $('#mBtns').onclick=null; inp.onkeydown=null;
+      res(v);
+    }
+    $('#mBtns').onclick=function(e){
+      const b=e.target.closest('button'); if(!b) return;
+      const btn=o.buttons[+b.dataset.i];
+      done(btn.value===null ? null : (o.input!=null ? {v:btn.value, text:inp.value.trim()} : {v:btn.value}));
+    };
+    bg.onclick=function(e){ if(e.target===bg) done(null); };
+    inp.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault();
+      const ok=o.buttons.find(function(b){return b.value!=null&&b.value!=='cancel';});
+      if(ok) done({v:ok.value, text:inp.value.trim()}); } };
+    bg.hidden=false;
+    if(o.input!=null) setTimeout(function(){ inp.focus(); inp.select(); },60);
+  });
+}
+
 /* --- perfis --- */
 function profs(){ return store.get('bal.profiles.v2', []); }
 function renderProfs(){
   const p=profs();
   $('#profSel').innerHTML='<option value="">— escolher perfil —</option>'+p.map((x,i)=>'<option value="'+i+'">'+x.name+'</option>').join('');
 }
-$('#profSave').addEventListener('click', ()=>{
-  const name=prompt('Nome do perfil (ex.: Glock 34 + dot):','');
-  if(!name) return;
-  const p=profs(); p.push({name:name, s:JSON.parse(JSON.stringify(S))});
+async function novoPerfil(sug){
+  const r=await ask({
+    title:'Novo perfil',
+    msg:'Dê um nome para reconhecer essa arma depois.',
+    input: sug||'',
+    buttons:[{label:'Salvar', style:'pri', value:'ok'},{label:'Cancelar', style:'gh', value:null}]
+  });
+  if(!r || !r.text) return;
+  const p=profs(); p.push({name:r.text, s:JSON.parse(JSON.stringify(S))});
   store.set('bal.profiles.v2', p); renderProfs(); $('#profSel').value=String(p.length-1);
+}
+$('#profSave').addEventListener('click', async ()=>{
+  const p=profs(), i=$('#profSel').value;
+  if(i==='' || !p[+i]){ novoPerfil(''); return; }
+  const nome=p[+i].name;
+  const r=await ask({
+    title:'Salvar configuração',
+    msg:'Perfil selecionado: <b>'+nome+'</b>',
+    buttons:[
+      {label:'Salvar por cima de «'+nome+'»', style:'pri', value:'over'},
+      {label:'Criar novo perfil', value:'new'},
+      {label:'Cancelar', style:'gh', value:null}
+    ]
+  });
+  if(!r) return;
+  if(r.v==='new'){ novoPerfil(''); return; }
+  const c=await ask({
+    title:'Tem certeza?',
+    msg:'A configuração salva em <b>'+nome+'</b> vai ser substituída pela de agora. Não dá para desfazer.',
+    buttons:[
+      {label:'Sim, salvar por cima', style:'dgr', value:'yes'},
+      {label:'Cancelar', style:'gh', value:null}
+    ]
+  });
+  if(!c || c.v!=='yes') return;
+  const arr=profs(); arr[+i].s=JSON.parse(JSON.stringify(S));
+  store.set('bal.profiles.v2', arr); renderProfs(); $('#profSel').value=i;
+  await ask({title:'Salvo', msg:'<b>'+nome+'</b> foi atualizado.', buttons:[{label:'Fechar', style:'pri', value:'ok'}]});
 });
 $('#profSel').addEventListener('change', e=>{
   const i=e.target.value; if(i==='') return;
   const p=profs()[+i]; if(!p) return;
   S=Object.assign({}, DEFAULTS, p.s); syncAll(); refresh();
 });
-$('#profDel').addEventListener('click', ()=>{
-  const i=$('#profSel').value; if(i==='') return;
-  const p=profs(); p.splice(+i,1); store.set('bal.profiles.v2',p); renderProfs();
+$('#profDel').addEventListener('click', async ()=>{
+  const i=$('#profSel').value;
+  if(i===''){ await ask({title:'Nenhum perfil escolhido', msg:'Escolha um perfil na lista antes de apagar.', buttons:[{label:'Fechar', style:'pri', value:'ok'}]}); return; }
+  const p=profs(); if(!p[+i]) return;
+  const nome=p[+i].name;
+  const c=await ask({
+    title:'Apagar perfil',
+    msg:'Apagar <b>'+nome+'</b> de vez? Não dá para desfazer.',
+    buttons:[
+      {label:'Sim, apagar', style:'dgr', value:'yes'},
+      {label:'Cancelar', style:'gh', value:null}
+    ]
+  });
+  if(!c || c.v!=='yes') return;
+  p.splice(+i,1); store.set('bal.profiles.v2',p); renderProfs();
 });
-$('#resetAll').addEventListener('click', ()=>{
-  if(!confirm('Restaurar tudo para o padrão?')) return;
+$('#resetAll').addEventListener('click', async ()=>{
+  const c=await ask({
+    title:'Restaurar padrão',
+    msg:'Volta arma, munição, alvos e tela para a configuração original. Seus perfis salvos <b>não</b> são apagados.',
+    buttons:[{label:'Restaurar', style:'dgr', value:'yes'},{label:'Cancelar', style:'gh', value:null}]
+  });
+  if(!c || c.v!=='yes') return;
   S=JSON.parse(JSON.stringify(DEFAULTS)); syncAll(); refresh();
 });
 
