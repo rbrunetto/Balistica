@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0a0d14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Balística">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="icon" href="data:image/png;base64,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">
+<title>Balística — visão lateral</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#0a0d14; --panel:#121826; --panel2:#0f141f; --line:#232c3f; --line2:#1a2131;
+  --tx:#e9eef8; --mu:#8e9cb5; --mu2:#66738c;
+  --red:#ff5252; --redg:rgba(255,82,82,.35);
+  --cy:#4cc2ff; --am:#ffc861; --vi:#b48cff; --gr:#3ddc97;
+  --acc:#4cc2ff;
+  --r:13px;
+}
+html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+body{
+  background:var(--bg); color:var(--tx);
+  font:400 15px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+}
+#app{
+  display:grid; grid-template-rows:auto auto auto auto 1fr;
+  height:100dvh; max-height:100dvh; overflow:hidden;
+  padding-top:env(safe-area-inset-top);
+}
+
+/* ---------- header ---------- */
+header{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px 8px; border-bottom:1px solid var(--line2);
+  background:linear-gradient(180deg,#111726,#0c111c);
+}
+header .logo{width:22px;height:22px;flex:0 0 auto}
+header h1{margin:0;font-size:15px;font-weight:650;letter-spacing:.2px;white-space:nowrap}
+header .sub{font-size:11px;color:var(--mu2);margin-left:auto;text-align:right;line-height:1.25;max-width:46%}
+
+/* ---------- canvas ---------- */
+#viz{position:relative;background:#080b12;border-bottom:1px solid var(--line2)}
+#cv{display:block;width:100%;height:42dvh;min-height:230px;max-height:380px;touch-action:none}
+#vizhint{
+  position:absolute;left:50%;bottom:4px;transform:translateX(-50%);
+  font-size:10.5px;color:#9aa8c0;pointer-events:none;
+  background:rgba(16,22,34,.94);border:1px solid #26314a;
+  padding:4px 11px;border-radius:20px;white-space:nowrap;
+  transition:opacity .5s;box-shadow:0 3px 12px rgba(0,0,0,.5)
+}
+
+/* ---------- stats strip ---------- */
+#stats{
+  display:flex;gap:7px;overflow-x:auto;padding:8px 12px;
+  border-bottom:1px solid var(--line2); background:var(--panel2);
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+}
+#stats::-webkit-scrollbar{display:none}
+.stat{
+  flex:0 0 auto;background:#161d2c;border:1px solid var(--line);border-radius:10px;
+  padding:5px 10px;min-width:74px
+}
+.stat .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--mu2);white-space:nowrap}
+.stat .v{font-size:14px;font-weight:650;margin-top:1px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.stat.z1 .v{color:var(--am)} .stat.z2 .v{color:var(--am)}
+.stat.ap .v{color:var(--vi)} .stat.uf .v{color:var(--gr)}
+.stat.warn{border-color:#5d3a1a;background:#241a10}
+.stat.warn .v{color:#ffb020}
+
+/* ---------- tabs ---------- */
+nav{display:grid;grid-template-columns:repeat(4,1fr);background:var(--panel2);border-bottom:1px solid var(--line)}
+nav button{
+  appearance:none;border:0;background:transparent;color:var(--mu);
+  font:600 13px/1 inherit;padding:11px 4px 9px;cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s
+}
+nav button.on{color:var(--tx);border-bottom-color:var(--acc)}
+
+/* ---------- panels ---------- */
+main{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(28px + env(safe-area-inset-bottom))}
+section{display:none;padding:14px 14px 0}
+section.on{display:block}
+
+.grp{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;margin-bottom:11px}
+.grp>h2{
+  margin:0 0 10px;font-size:10.5px;font-weight:700;letter-spacing:1.1px;
+  text-transform:uppercase;color:var(--mu2)
+}
+.fld{margin-bottom:14px}
+.fld:last-child{margin-bottom:2px}
+.fhd{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+.fhd .nm{font-size:13px;color:var(--mu);flex:1;min-width:0}
+.fhd .nm b{color:var(--tx);font-weight:600}
+.fhd .un{font-size:12px;color:var(--mu2)}
+input[type=number],input[type=text],select{
+  appearance:none;-webkit-appearance:none;
+  background:#0a0e17;border:1px solid var(--line);border-radius:9px;color:var(--tx);
+  font:600 16px/1 inherit;padding:8px 9px;width:100%;font-variant-numeric:tabular-nums
+}
+input[type=number],input.tdist,#bcN{width:82px;text-align:right;flex:0 0 auto}
+.tgt input.tdist{width:70px}
+select{background-image:none;padding-right:9px}
+input:focus,select:focus{outline:none;border-color:var(--acc)}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent;margin:0
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:#222b3d}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:#f2f6ff;border:2px solid #0a0e17;box-shadow:0 1px 5px rgba(0,0,0,.6);margin-top:-10px
+}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:#222b3d}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:2px solid #0a0e17;border-radius:50%;background:#f2f6ff}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips.nowrap{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips.nowrap::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;appearance:none;border:1px solid var(--line);background:#0e1420;color:var(--mu);
+  border-radius:20px;padding:6px 12px;font:600 12.5px/1 inherit;cursor:pointer;white-space:nowrap
+}
+.chip.on{background:#17324a;border-color:#2f6f9e;color:#cbe9ff}
+.chip.sm{padding:5px 10px;font-size:11.5px}
+
+.seg{display:flex;background:#0a0e17;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{
+  flex:1;appearance:none;border:0;background:transparent;color:var(--mu);
+  font:600 13px/1 inherit;padding:8px 4px;border-radius:7px;cursor:pointer
+}
+.seg button.on{background:#20293b;color:var(--tx)}
+
+.readout{
+  display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;padding-top:11px;border-top:1px solid var(--line2)
+}
+.ro{flex:1 1 30%;min-width:88px}
+.ro .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mu2)}
+.ro .v{font-size:14px;font-weight:650;margin-top:2px;font-variant-numeric:tabular-nums}
+
+.btn{
+  appearance:none;border:1px solid var(--line);background:#151d2c;color:var(--tx);
+  border-radius:10px;padding:11px 14px;font:600 14px/1 inherit;cursor:pointer;width:100%
+}
+.btn.pri{background:#1b3a55;border-color:#2f6f9e;color:#d8ecff}
+.btn.gh{background:transparent;color:var(--mu)}
+.btnrow{display:flex;gap:8px;margin-top:4px}
+
+/* ---------- targets ---------- */
+.tgt{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:11px 12px;margin-bottom:9px;position:relative
+}
+.tgt.sel{border-color:#2f6f9e;background:#131c2b}
+.tgt .th{display:flex;align-items:center;gap:9px}
+.tgt .dot{width:9px;height:9px;border-radius:50%;background:var(--gr);flex:0 0 auto}
+.tgt .nm{font-size:13px;color:var(--mu);flex:1}
+.tgt .dist{display:flex;align-items:center;gap:6px}
+.stp{
+  appearance:none;width:34px;height:34px;border:1px solid var(--line);background:#0e1420;
+  color:var(--tx);border-radius:9px;font:600 18px/1 inherit;cursor:pointer;flex:0 0 auto
+}
+.tgt .del{
+  appearance:none;border:0;background:transparent;color:var(--mu2);
+  font-size:19px;line-height:1;padding:4px 2px 4px 8px;cursor:pointer
+}
+.tgt .ro-row{display:flex;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line2)}
+.tgt .ro-row .ro{flex:1;min-width:0}
+.hit-hi{color:var(--am)} .hit-lo{color:var(--red)} .hit-ok{color:var(--gr)}
+
+/* ---------- table ---------- */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;text-align:right;font-size:12.5px;white-space:nowrap}
+th{
+  font-size:9.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mu2);font-weight:700;
+  border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)
+}
+td:first-child,th:first-child{text-align:left;font-weight:650}
+tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+tbody tr.zero td{background:rgba(255,200,97,.10)}
+tbody tr.zero td:first-child{box-shadow:inset 2px 0 0 var(--am)}
+tbody tr.tgt-row td{background:rgba(61,220,151,.10)}
+tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
+
+.note{font-size:11.5px;line-height:1.5;color:var(--mu2);margin:10px 2px 0}
+.note b{color:var(--mu)}
+.warnbox{
+  background:#241a10;border:1px solid #5d3a1a;color:#ffcf8a;
+  border-radius:10px;padding:9px 11px;font-size:12.5px;line-height:1.45;margin-bottom:11px
+}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:2px}
+.lg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu)}
+.lg i{width:16px;height:0;border-top-width:2.5px;display:inline-block;flex:0 0 auto}
+
+/* ---------- aviso de script bloqueado ---------- */
+#jsblock{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:26px;background:var(--bg);
+  visibility:hidden;opacity:0;animation:jbin .35s ease 1.1s forwards
+}
+@keyframes jbin{to{visibility:visible;opacity:1}}
+#jsblock .jb{
+  max-width:420px;background:#241a10;border:1px solid #5d3a1a;color:#ffcf8a;
+  border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.55
+}
+#jsblock .jb b{color:#ffe0ad}
+#booterr{
+  position:fixed;left:12px;right:12px;bottom:12px;z-index:9998;
+  background:#2a1216;border:1px solid #6d2430;color:#ffb3bd;
+  border-radius:12px;padding:12px 14px;font:500 12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  white-space:pre-wrap;word-break:break-word;max-height:45dvh;overflow:auto
+}
+
+</style>
+</head>
+<body>
+<div id="jsblock">
+  <div class="jb">
+    <b>O JavaScript não rodou aqui.</b>
+    Esta janela de pré-visualização bloqueia scripts, então o app não consegue funcionar dentro dela.
+    Toque no botão de <b>download</b> no topo, salve o arquivo em <b>Arquivos / iCloud Drive</b>
+    e abra por lá — ou hospede o arquivo e abra o link no <b>Safari</b>.
+  </div>
+</div>
+
+<div id="app">
+
+  <header>
+    <img class="logo" src="data:image/png;base64,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" alt="">
+    <h1>Balística</h1>
+    <div class="sub" id="hdrSub">—</div>
+  </header>
+
+  <div id="viz">
+    <canvas id="cv"></canvas>
+    <div id="vizhint">arraste as bolinhas verdes para mover os alvos</div>
+  </div>
+
+  <div id="stats"></div>
+
+  <nav>
+    <button data-tab="arma" class="on">Arma</button>
+    <button data-tab="muni">Munição</button>
+    <button data-tab="alvos">Alvos</button>
+    <button data-tab="tab">Tabela</button>
+  </nav>
+
+  <main>
+
+    <!-- ================= ARMA ================= -->
+    <section data-tab="arma" class="on">
+      <div class="grp">
+        <h2>Arma</h2>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Tipo</span></div>
+          <div class="chips nowrap" id="gunType"></div>
+        </div>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Mira</span></div>
+          <div class="chips nowrap" id="sightType"></div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>Altura da mira</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Centro do dot acima do <b>eixo do cano</b></span>
+            <input type="number" id="shN" min="0" max="150" step="0.5"><span class="un">mm</span>
+          </div>
+          <input type="range" id="shR" min="0" max="150" step="0.5">
+          <div class="chips nowrap" id="shChips"></div>
+        </div>
+        <p class="note">Meça do <b>centro da lente do dot</b> até o <b>centro do cano</b>. É essa altura que cria os dois zeros e faz a bala bater baixo de perto.</p>
+      </div>
+
+      <div class="grp">
+        <h2>Zeragem</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Distância em que a arma está <b>zerada</b></span>
+            <input type="number" id="zN" min="1" max="600" step="1"><span class="un">m</span>
+          </div>
+          <input type="range" id="zR" min="1" max="300" step="1">
+          <div class="chips nowrap" id="zChips"></div>
+        </div>
+        <div id="zeroExplain" class="note"></div>
+      </div>
+
+      <div class="grp">
+        <h2>Tela</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Distância máxima do gráfico</span>
+            <input type="number" id="rN" min="10" max="600" step="5"><span class="un">m</span>
+          </div>
+          <input type="range" id="rR" min="10" max="600" step="5">
+          <div class="chips nowrap" id="rChips"></div>
+        </div>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Escala vertical</span><span class="un" id="vzLbl">automática</span></div>
+          <input type="range" id="vzR" min="0" max="100" step="1">
+          <div class="chips"><button class="chip sm" id="vzAuto">Voltar para automática</button></div>
+        </div>
+        <div class="legend">
+          <span class="lg"><i style="border-top:2.5px solid #ff5252"></i>trajetória da bala</span>
+          <span class="lg"><i style="border-top:2.5px dashed #4cc2ff"></i>linha de visada (dot)</span>
+          <span class="lg"><i style="border-top:2.5px dotted #ffc861"></i>prolongamento do cano</span>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>Perfis salvos</h2>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Guarde a configuração de cada arma sua</span></div>
+          <select id="profSel"></select>
+          <div class="btnrow" style="margin-top:9px">
+            <button class="btn pri" id="profSave">Salvar atual</button>
+            <button class="btn gh" id="profDel">Apagar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MUNIÇÃO ================= -->
+    <section data-tab="muni">
+      <div class="grp">
+        <h2>Munição</h2>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Preset</span></div>
+          <select id="ammoSel"></select>
+        </div>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Peso do projétil</span>
+            <input type="number" id="grN" min="15" max="800" step="1"><span class="un">gr</span>
+          </div>
+          <input type="range" id="grR" min="15" max="300" step="1">
+        </div>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Coeficiente balístico <b>G1</b></span>
+            <input type="text" inputmode="decimal" id="bcN"><span class="un">BC</span>
+          </div>
+          <input type="range" id="bcR" min="30" max="1200" step="5">
+          <p class="note">Vem na caixa ou no site do fabricante. Só muda a curva de perda de velocidade — um erro de 10% aqui quase não altera nada até 100 m.</p>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>Velocidade</h2>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Como você quer informar</span></div>
+          <div class="seg" id="velMode">
+            <button data-m="fps" class="on">Velocidade (fps)</button>
+            <button data-m="pf">Fator de potência</button>
+          </div>
+        </div>
+        <div class="fld" id="fldFps">
+          <div class="fhd">
+            <span class="nm">Velocidade na boca</span>
+            <input type="number" id="vN" min="200" max="4500" step="5"><span class="un">fps</span>
+          </div>
+          <input type="range" id="vR" min="200" max="4500" step="5">
+        </div>
+        <div class="fld" id="fldPf" style="display:none">
+          <div class="fhd">
+            <span class="nm">Fator de potência medido</span>
+            <input type="number" id="pfN" min="40" max="400" step="1"><span class="un">PF</span>
+          </div>
+          <input type="range" id="pfR" min="40" max="400" step="1">
+          <p class="note">Fator = peso (gr) × velocidade (fps) ÷ 1000. Informando o fator e o peso, o app calcula a velocidade.</p>
+        </div>
+        <div class="readout">
+          <div class="ro"><div class="k">Velocidade</div><div class="v" id="roV">—</div></div>
+          <div class="ro"><div class="k">Fator</div><div class="v" id="roPf">—</div></div>
+          <div class="ro"><div class="k">Energia na boca</div><div class="v" id="roE">—</div></div>
+        </div>
+      </div>
+
+      <div class="grp">
+        <h2>Ambiente</h2>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Temperatura</span><input type="number" id="tN" min="-10" max="50" step="1"><span class="un">°C</span></div>
+          <input type="range" id="tR" min="-10" max="50" step="1">
+        </div>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Altitude</span><input type="number" id="aN" min="0" max="3000" step="10"><span class="un">m</span></div>
+          <input type="range" id="aR" min="0" max="3000" step="10">
+        </div>
+        <div class="fld">
+          <div class="fhd"><span class="nm">Umidade</span><input type="number" id="uN" min="0" max="100" step="5"><span class="un">%</span></div>
+          <input type="range" id="uR" min="0" max="100" step="5">
+        </div>
+        <div class="readout">
+          <div class="ro"><div class="k">Densidade do ar</div><div class="v" id="roRho">—</div></div>
+          <div class="ro"><div class="k">Vel. do som</div><div class="v" id="roC">—</div></div>
+          <div class="ro"><div class="k">Mach na boca</div><div class="v" id="roM">—</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ALVOS ================= -->
+    <section data-tab="alvos">
+      <div class="grp">
+        <h2>Zona de acerto</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Tolerância aceitável <b>acima e abaixo</b> da visada</span>
+            <input type="number" id="tolN" min="1" max="60" step="0.5"><span class="un">± cm</span>
+          </div>
+          <input type="range" id="tolR" min="1" max="60" step="0.5">
+          <div class="chips nowrap" id="tolChips"></div>
+        </div>
+        <p class="note">É o que define a <b>faixa útil</b>: o trecho em que dá para mirar direto no ponto, sem compensar nada.</p>
+      </div>
+
+      <div class="grp">
+        <h2>Distâncias rápidas</h2>
+        <div class="chips" id="tgtPresets"></div>
+      </div>
+
+      <div id="tgtList"></div>
+      <button class="btn pri" id="addTgt" style="margin-bottom:12px">+ Adicionar alvo</button>
+    </section>
+
+    <!-- ================= TABELA ================= -->
+    <section data-tab="tab">
+      <div class="grp">
+        <h2>Passo da tabela</h2>
+        <div class="chips nowrap" id="stepChips"></div>
+      </div>
+      <div class="tblwrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+      <p class="note">
+        <b>Impacto</b> é onde a bala passa em relação ao ponto que o dot está marcando: positivo = acima do ponto de mira, negativo = abaixo.
+        Linhas amarelas são os zeros, verdes são os seus alvos.
+      </p>
+      <p class="note" style="margin-top:14px">
+        Modelo de massa pontual com arrasto padrão G1 e integração Runge–Kutta de 4ª ordem, atmosfera corrigida por temperatura,
+        altitude e umidade. Não inclui vento, efeito Coriolis nem inclinação do tiro. Confira sempre no papel antes de confiar nos números.
+      </p>
+      <button class="btn gh" id="resetAll" style="margin-top:16px">Restaurar configuração padrão</button>
+    </section>
+
+  </main>
+</div>
+
+<script>
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number') r=[r,r,r,r]; if(!Array.isArray(r)) r=[0,0,0,0];
+    var a=r[0],b=r[1]!=null?r[1]:a,c=r[2]!=null?r[2]:a,d=r[3]!=null?r[3]:b;
+    this.moveTo(x+a,y); this.lineTo(x+w-b,y); this.quadraticCurveTo(x+w,y,x+w,y+b);
+    this.lineTo(x+w,y+h-c); this.quadraticCurveTo(x+w,y+h,x+w-c,y+h);
+    this.lineTo(x+d,y+h); this.quadraticCurveTo(x,y+h,x,y+h-d);
+    this.lineTo(x,y+a); this.quadraticCurveTo(x,y,x+a,y); return this;
+  };
+}</script>
+<script>
+/* ===========================================================
+   MOTOR BALÍSTICO — massa pontual, arrasto G1, integração RK4
+   Unidades internas: SI (m, m/s, kg, s). Conversões só na UI.
+   =========================================================== */
+
+// Tabela padrão de arrasto G1 (Mach -> Cd)
+const G1_TABLE = [
+  [0.00,0.2629],[0.05,0.2558],[0.10,0.2487],[0.15,0.2413],[0.20,0.2344],
+  [0.25,0.2278],[0.30,0.2214],[0.35,0.2155],[0.40,0.2104],[0.45,0.2061],
+  [0.50,0.2032],[0.55,0.2020],[0.60,0.2034],[0.70,0.2165],[0.725,0.2230],
+  [0.75,0.2313],[0.775,0.2417],[0.80,0.2546],[0.825,0.2706],[0.85,0.2901],
+  [0.875,0.3136],[0.90,0.3415],[0.925,0.3734],[0.95,0.4084],[0.975,0.4448],
+  [1.00,0.4805],[1.025,0.5136],[1.05,0.5427],[1.075,0.5677],[1.10,0.5883],
+  [1.125,0.6053],[1.15,0.6191],[1.20,0.6393],[1.25,0.6518],[1.30,0.6589],
+  [1.35,0.6621],[1.40,0.6625],[1.45,0.6607],[1.50,0.6573],[1.55,0.6528],
+  [1.60,0.6474],[1.65,0.6413],[1.70,0.6347],[1.75,0.6280],[1.80,0.6210],
+  [1.85,0.6141],[1.90,0.6072],[1.95,0.6003],[2.00,0.5934],[2.05,0.5867],
+  [2.10,0.5804],[2.15,0.5743],[2.20,0.5685],[2.25,0.5630],[2.30,0.5577],
+  [2.35,0.5527],[2.40,0.5481],[2.45,0.5438],[2.50,0.5397],[2.60,0.5325],
+  [2.70,0.5264],[2.80,0.5211],[2.90,0.5168],[3.00,0.5133],[3.10,0.5105],
+  [3.20,0.5084],[3.30,0.5067],[3.40,0.5054],[3.50,0.5040],[3.60,0.5030],
+  [3.70,0.5022],[3.80,0.5016],[3.90,0.5010],[4.00,0.5006],[4.20,0.4998],
+  [4.40,0.4995],[4.60,0.4992],[4.80,0.4990],[5.00,0.4988]
+];
+
+function cdG1(mach){
+  const T = G1_TABLE;
+  if (mach <= T[0][0]) return T[0][1];
+  const last = T.length - 1;
+  if (mach >= T[last][0]) return T[last][1];
+  let lo = 0, hi = last;
+  while (hi - lo > 1){ const mid = (lo + hi) >> 1; if (T[mid][0] <= mach) lo = mid; else hi = mid; }
+  const [m0,c0] = T[lo], [m1,c1] = T[hi];
+  return c0 + (c1 - c0) * (mach - m0) / (m1 - m0);
+}
+
+const G = 9.80665;                 // gravidade (m/s²)
+const KDRAG = 5.58549e-4;          // A/(2m) do projétil padrão G1, em m²/kg
+const GRAIN_KG = 6.479891e-5;      // 1 grain em kg
+const FPS_MS = 0.3048;             // 1 fps em m/s
+
+// Atmosfera --------------------------------------------------
+function pressureFromAltitude(altM){          // ISA, hPa
+  return 1013.25 * Math.pow(1 - 2.25577e-5 * altM, 5.25588);
+}
+function makeEnv({tempC = 15, altM = 0, pressHPa = null, rhPct = 50} = {}){
+  const p = (pressHPa == null) ? pressureFromAltitude(altM) : pressHPa;   // hPa
+  const T = tempC + 273.15;
+  // pressão de vapor (Tetens) para corrigir densidade com umidade
+  const es = 6.1078 * Math.pow(10, (7.5 * tempC) / (tempC + 237.3));      // hPa
+  const pv = Math.max(0, Math.min(1, rhPct / 100)) * es;
+  const pd = p - pv;
+  const rho = (pd * 100) / (287.058 * T) + (pv * 100) / (461.495 * T);    // kg/m³
+  const c = 331.3 * Math.sqrt(1 + tempC / 273.15);                        // m/s
+  return { rho, c, pressHPa: p, tempC, rhPct };
+}
+
+// Integração -------------------------------------------------
+function deriv(s, env, bc, out){
+  const vx = s[2], vy = s[3];
+  const v = Math.sqrt(vx*vx + vy*vy);
+  const k = KDRAG * env.rho * cdG1(v / env.c) / bc;
+  out[0] = vx;
+  out[1] = vy;
+  out[2] = -k * v * vx;
+  out[3] = -k * v * vy - G;
+  return out;
+}
+
+/**
+ * Integra a trajetória.
+ * y = 0 é a LINHA DE VISADA (horizontal). A boca do cano fica em y = -sightH.
+ * angle = ângulo do cano acima da linha de visada (rad).
+ */
+function simulate({ v0, bc, angle, sightH, maxRange, env, dt = 0.0005, floor = -25 }){
+  const s = [0, -sightH, v0 * Math.cos(angle), v0 * Math.sin(angle)];
+  const k1=[0,0,0,0], k2=[0,0,0,0], k3=[0,0,0,0], k4=[0,0,0,0], tmp=[0,0,0,0];
+  const xs = [s[0]], ys = [s[1]], vs = [v0], ts = [0];
+  let t = 0, steps = 0;
+  const maxSteps = 200000;
+  while (s[0] < maxRange && s[1] > floor && steps < maxSteps && t < 12){
+    deriv(s, env, bc, k1);
+    for (let i=0;i<4;i++) tmp[i] = s[i] + 0.5*dt*k1[i];
+    deriv(tmp, env, bc, k2);
+    for (let i=0;i<4;i++) tmp[i] = s[i] + 0.5*dt*k2[i];
+    deriv(tmp, env, bc, k3);
+    for (let i=0;i<4;i++) tmp[i] = s[i] + dt*k3[i];
+    deriv(tmp, env, bc, k4);
+    for (let i=0;i<4;i++) s[i] += (dt/6)*(k1[i] + 2*k2[i] + 2*k3[i] + k4[i]);
+    t += dt; steps++;
+    xs.push(s[0]); ys.push(s[1]); vs.push(Math.sqrt(s[2]*s[2] + s[3]*s[3])); ts.push(t);
+    if (s[2] <= 0) break;   // perdeu toda a velocidade horizontal
+  }
+  return { xs, ys, vs, ts, n: xs.length };
+}
+
+// Consultas na trajetória ------------------------------------
+function sampleAt(traj, x){
+  const { xs, ys, vs, ts, n } = traj;
+  if (x <= xs[0]) return { y: ys[0], v: vs[0], t: ts[0], ok: x >= 0 };
+  if (x > xs[n-1]) return { y: NaN, v: NaN, t: NaN, ok: false };
+  let lo = 0, hi = n - 1;
+  while (hi - lo > 1){ const mid = (lo + hi) >> 1; if (xs[mid] <= x) lo = mid; else hi = mid; }
+  const f = (x - xs[lo]) / (xs[hi] - xs[lo] || 1);
+  return {
+    y: ys[lo] + (ys[hi] - ys[lo]) * f,
+    v: vs[lo] + (vs[hi] - vs[lo]) * f,
+    t: ts[lo] + (ts[hi] - ts[lo]) * f,
+    ok: true
+  };
+}
+
+/** Todos os cruzamentos da trajetória com a linha de visada (y = 0). */
+function crossings(traj){
+  const { xs, ys, n } = traj;
+  const out = [];
+  for (let i = 1; i < n; i++){
+    if ((ys[i-1] < 0 && ys[i] >= 0) || (ys[i-1] > 0 && ys[i] <= 0)){
+      const f = -ys[i-1] / (ys[i] - ys[i-1]);
+      out.push(xs[i-1] + (xs[i] - xs[i-1]) * f);
+    }
+  }
+  return out;
+}
+
+/** Ápice: ponto mais alto da trajetória acima da linha de visada. */
+function apex(traj){
+  const { xs, ys, n } = traj;
+  let bi = 0;
+  for (let i = 1; i < n; i++) if (ys[i] > ys[bi]) bi = i;
+  return { x: xs[bi], y: ys[bi] };
+}
+
+/** Faixa útil: trecho contínuo em que |y| <= tol, contendo os zeros. */
+function usefulRange(traj, tol){
+  const { xs, ys, n } = traj;
+  let start = null, end = null;
+  for (let i = 0; i < n; i++){
+    if (Math.abs(ys[i]) <= tol){ if (start === null) start = xs[i]; end = xs[i]; }
+    else if (start !== null && xs[i] > 0.5){ break; }
+  }
+  return (start === null) ? null : { near: start, far: end };
+}
+
+/**
+ * Resolve o ângulo do cano para que o impacto fique EM CIMA da linha de visada
+ * na distância `zeroDist` (é isso que acontece quando você zera a arma).
+ * y(zeroDist) cresce de forma monótona com o ângulo => raiz única, sem ambiguidade.
+ * Os dois "zeros" (1º e 2º) são consequência, não entrada.
+ */
+function solveAngle({ v0, bc, sightH, zeroDist, env, dt = 0.0008 }){
+  const range = zeroDist * 1.05 + 1;
+  const yAt = (ang) => {
+    const tr = simulate({ v0, bc, angle: ang, sightH, maxRange: range, env, dt, floor: -400 });
+    const s = sampleAt(tr, zeroDist);
+    return Number.isFinite(s.y) ? s.y : -1e6;   // nem chegou lá => muito abaixo
+  };
+  let lo = -0.02, hi = 0.45;                    // -1,1° a +26°
+  if (yAt(hi) < 0) return { angle: hi, impossible: true };   // nem no ângulo máximo alcança
+  if (yAt(lo) > 0) return { angle: lo, impossible: true };
+  for (let i = 0; i < 48; i++){
+    const mid = 0.5 * (lo + hi);
+    if (yAt(mid) < 0) lo = mid; else hi = mid;
+    if (hi - lo < 1e-9) break;
+  }
+  return { angle: 0.5 * (lo + hi), impossible: false };
+}
+
+/** Solução completa, pronta para desenhar. */
+function solve(opts){
+  const {
+    velFps, grains, bc, sightHmm, zeroDist,
+    displayMax = 100, tolCm = 15, env = makeEnv()
+  } = opts;
+
+  const v0 = velFps * FPS_MS;
+  const sightH = sightHmm / 1000;
+  const mass = grains * GRAIN_KG;
+  // simular bem além da tela para conseguir achar e reportar o 2º zero
+  const simRange = Math.min(1500, Math.max(displayMax * 1.05, zeroDist * 6, 400));
+
+  const { angle, impossible } = solveAngle({ v0, bc, sightH, zeroDist, env });
+  const traj = simulate({ v0, bc, angle, sightH, maxRange: simRange, env, dt: 0.0002 });
+  let cs = crossings(traj);
+  if (cs.length === 0 && !impossible) cs = [zeroDist];        // caso tangente
+  const ap = apex(traj);
+  const ur = usefulRange(traj, tolCm / 100);
+
+  const zero1 = cs[0] ?? null;
+  const zero2 = cs[1] ?? null;
+  // O zero pedido é o 1º (na subida) ou o 2º (na descida)?
+  let zeroIsWhich = 1;
+  if (zero2 != null && Math.abs(zeroDist - zero2) < Math.abs(zeroDist - zero1)) zeroIsWhich = 2;
+  const tangent = (zero2 == null) || (zero2 - zero1 < 0.5);
+
+  return {
+    angle, impossible, traj, mass, v0, env,
+    zero1, zero2, zeroIsWhich, tangent,
+    apex: ap,
+    useful: ur,
+    maxSimRange: traj.xs[traj.n - 1],
+    powerFactor: grains * velFps / 1000,
+    muzzleEnergyJ: 0.5 * mass * v0 * v0,
+    at(x){
+      const s = sampleAt(traj, x);
+      return { ...s, energyJ: 0.5 * mass * s.v * s.v, mach: s.v / env.c };
+    }
+  };
+}
+
+const BAL = { solve, makeEnv, simulate, solveAngle, crossings, apex, usefulRange, cdG1, sampleAt, FPS_MS, GRAIN_KG };
+if (typeof module !== 'undefined') module.exports = BAL;
+if (typeof window !== 'undefined') window.BAL = BAL;
+
+</script>
+<script>
+/* =======================================================
+   BALÍSTICA — visão lateral   |  app
+   ======================================================= */
+(function(){
+'use strict';
+try{ var _jb=document.getElementById('jsblock'); if(_jb) _jb.parentNode.removeChild(_jb); }catch(e){}
+
+/* ---------- utilidades ---------- */
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const clamp = (v,a,b)=> v<a?a:(v>b?b:v);
+const nf = (n,d)=>{ d = d==null?1:d; if(!isFinite(n)) return '—'; const v=(Math.abs(n)<Math.pow(10,-d)/2)?0:n; return v.toFixed(d).replace('.',','); };
+const sg = (n,d)=> (n>=0?'+':'') + nf(n,d);
+const MS_FPS = 1/0.3048;
+
+const mem = {};
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?(k in mem?mem[k]:d):JSON.parse(v);}catch(e){ return (k in mem)?mem[k]:d; } },
+  set(k,v){ mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  del(k){ delete mem[k]; try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ---------- biblioteca de munições ---------- */
+const AMMO = [
+ {g:'Pistola 9×19',  id:'p9-115',  n:'115 gr FMJ · cano 4"',        gr:115, bc:0.140, fps:1180},
+ {g:'Pistola 9×19',  id:'p9-124',  n:'124 gr FMJ · cano 5"',        gr:124, bc:0.155, fps:1120},
+ {g:'Pistola 9×19',  id:'p9-124p', n:'124 gr JHP +P',               gr:124, bc:0.150, fps:1220},
+ {g:'Pistola 9×19',  id:'p9-147',  n:'147 gr FMJ subsônico',        gr:147, bc:0.200, fps:985},
+ {g:'Pistola 9×19',  id:'p9-124f130', n:'124 gr · recarga fator 130', gr:124, bc:0.155, fps:1048},
+ {g:'Pistola 9×19',  id:'p9-124f172', n:'124 gr · recarga fator 172', gr:124, bc:0.155, fps:1387},
+ {g:'Pistola 9×19',  id:'p9-147f130', n:'147 gr · recarga fator 130', gr:147, bc:0.200, fps:884},
+
+ {g:'Carabina 9mm (PCC, 16")', id:'c9-115', n:'115 gr FMJ', gr:115, bc:0.140, fps:1400},
+ {g:'Carabina 9mm (PCC, 16")', id:'c9-124', n:'124 gr FMJ', gr:124, bc:0.155, fps:1330},
+ {g:'Carabina 9mm (PCC, 16")', id:'c9-147', n:'147 gr FMJ subsônico', gr:147, bc:0.200, fps:1150},
+ {g:'Carabina 9mm (PCC, 16")', id:'c9-124f165', n:'124 gr · fator 165', gr:124, bc:0.155, fps:1331},
+
+ {g:'.22 LR',  id:'r22-hv',  n:'40 gr high velocity',    gr:40, bc:0.125, fps:1255},
+ {g:'.22 LR',  id:'r22-std', n:'40 gr standard',         gr:40, bc:0.130, fps:1080},
+ {g:'.22 LR',  id:'r22-sub', n:'40 gr subsônico',        gr:40, bc:0.135, fps:1040},
+
+ {g:'5.56×45 / .223', id:'f556-55-16', n:'55 gr FMJ M193 · cano 16"', gr:55, bc:0.243, fps:3100},
+ {g:'5.56×45 / .223', id:'f556-55-20', n:'55 gr FMJ M193 · cano 20"', gr:55, bc:0.243, fps:3240},
+ {g:'5.56×45 / .223', id:'f556-62',    n:'62 gr FMJ M855 · cano 16"', gr:62, bc:0.304, fps:2900},
+ {g:'5.56×45 / .223', id:'f556-69',    n:'69 gr OTM',                 gr:69, bc:0.301, fps:2750},
+ {g:'5.56×45 / .223', id:'f556-77',    n:'77 gr OTM (Mk262)',         gr:77, bc:0.372, fps:2750},
+
+ {g:'.308 Win / 7.62×51', id:'f308-147', n:'147 gr FMJ M80',   gr:147, bc:0.393, fps:2750},
+ {g:'.308 Win / 7.62×51', id:'f308-168', n:'168 gr HPBT match', gr:168, bc:0.462, fps:2650},
+ {g:'.308 Win / 7.62×51', id:'f308-175', n:'175 gr HPBT match', gr:175, bc:0.505, fps:2600},
+
+ {g:'Outros calibres', id:'o-380',   n:'.380 ACP 95 gr FMJ',      gr:95,  bc:0.130, fps:950},
+ {g:'Outros calibres', id:'o-38sp',  n:'.38 SPL 158 gr LRN',      gr:158, bc:0.180, fps:790},
+ {g:'Outros calibres', id:'o-357',   n:'.357 Mag 158 gr JSP',     gr:158, bc:0.205, fps:1310},
+ {g:'Outros calibres', id:'o-40',    n:'.40 S&W 180 gr FMJ',      gr:180, bc:0.160, fps:985},
+ {g:'Outros calibres', id:'o-45',    n:'.45 ACP 230 gr FMJ',      gr:230, bc:0.195, fps:835},
+ {g:'Outros calibres', id:'o-300sub',n:'.300 BLK 220 gr subsônico',gr:220,bc:0.608, fps:1030},
+ {g:'Outros calibres', id:'o-custom',n:'— personalizada —',        gr:124, bc:0.155, fps:1120}
+];
+
+const GUNS = [
+  {id:'pistola',  n:'Pistola',      sh:25, zero:15},
+  {id:'pcc',      n:'Carabina PCC', sh:40, zero:25},
+  {id:'fuzil',    n:'Fuzil',        sh:67, zero:50},
+  {id:'revolver', n:'Revólver',     sh:18, zero:15}
+];
+const SIGHTS = [
+  {id:'ferro',  n:'Mira de ferro', sh:{pistola:20, pcc:35, fuzil:63, revolver:15}},
+  {id:'dot',    n:'Red dot',       sh:{pistola:25, pcc:40, fuzil:67, revolver:28}},
+  {id:'luneta', n:'Luneta',        sh:{pistola:45, pcc:50, fuzil:55, revolver:45}}
+];
+
+const DEFAULTS = {
+  gun:'pistola', sight:'dot', shMm:25, zero:15, range:100,
+  ammo:'p9-124', gr:124, bc:0.155, fps:1120, velMode:'fps',
+  tempC:25, altM:0, rh:60,
+  tolCm:15, targets:[7,15,25,50], sel:0, step:10, vzoom:50, vauto:true
+};
+let S = Object.assign({}, DEFAULTS, store.get('bal.state.v2', {}));
+S.targets = (S.targets||[]).slice(0,8);
+if(!S.targets.length) S.targets = [15];
+
+const save = ()=> store.set('bal.state.v2', S);
+
+/* ---------- solução em cache ---------- */
+let SOL = null, ENV = null;
+function key(){ return [S.fps,S.gr,S.bc,S.shMm,S.zero,S.range,S.tempC,S.altM,S.rh,S.tolCm].join('|'); }
+let lastKey = '';
+function recompute(force){
+  const k = key();
+  if(!force && k === lastKey && SOL) return SOL;
+  lastKey = k;
+  ENV = BAL.makeEnv({tempC:S.tempC, altM:S.altM, rhPct:S.rh});
+  SOL = BAL.solve({
+    velFps:S.fps, grains:S.gr, bc:S.bc, sightHmm:S.shMm,
+    zeroDist:S.zero, displayMax:S.range, tolCm:S.tolCm, env:ENV
+  });
+  return SOL;
+}
+
+/* =======================================================
+   CANVAS
+   ======================================================= */
+const cv = $('#cv'), ctx = cv.getContext('2d');
+let W=0,H=0, PAD={l:34,r:46,t:16,b:24}, VIEW=null;
+
+function fitCanvas(){
+  const r = cv.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 3);
+  cv.width = Math.round(r.width*dpr); cv.height = Math.round(r.height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  W = r.width; H = r.height;
+}
+
+function computeView(sol){
+  const xs = sol.traj.xs, ys = sol.traj.ys;
+  let lo = -S.shMm/1000, hi = 0;
+  for(let i=0;i<sol.traj.n;i++){
+    if(xs[i] > S.range) break;
+    if(ys[i]<lo) lo=ys[i]; if(ys[i]>hi) hi=ys[i];
+  }
+  const tol = S.tolCm/100;
+  const span0 = Math.max(hi-lo, 0.02);
+  lo = Math.min(lo, Math.max(-tol*1.06, lo - span0*0.35));
+  hi = Math.max(hi, Math.min( tol*1.06, hi + span0*0.35));
+  let span = Math.max(hi-lo, 0.03);
+  const mid = (hi+lo)/2;
+  span *= 1.30;                                     // respiro
+  if(!S.vauto){                                     // zoom manual
+    span *= Math.pow(2,(50 - S.vzoom)/11);
+  }
+  const yMax = mid + span/2, yMin = mid - span/2;
+  const plotW = W-PAD.l-PAD.r, plotH = H-PAD.t-PAD.b;
+  return {
+    yMin, yMax, plotW, plotH,
+    x2p:(x)=> PAD.l + (x/S.range)*plotW,
+    p2x:(p)=> ((p-PAD.l)/plotW)*S.range,
+    y2p:(y)=> PAD.t + ((yMax-y)/(yMax-yMin))*plotH,
+    exag:( (plotH/(yMax-yMin)) / (plotW/S.range) )
+  };
+}
+
+function niceStep(range, target){
+  const raw = range/target;
+  const p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const c = raw/p;
+  return (c<1.5?1:c<3.5?2:c<7.5?5:10)*p;
+}
+
+/* --- rótulos com desvio automático de colisão --- */
+const DOWN=[0,15,30,45], UPDOWN=[0,-17,17,-34,34,-51,51];
+let LBL=[];
+function label(x,y,text,color,anchor,pri,tries,bg){
+  LBL.push({x:x,y:y,t:text,c:color,a:anchor||'center',p:pri==null?5:pri,tr:tries||UPDOWN,bg:bg});
+}
+function flushLabels(){
+  ctx.font='600 10px -apple-system,system-ui,sans-serif';
+  ctx.textBaseline='alphabetic';
+  LBL.sort((a,b)=>a.p-b.p);
+  const placed=[];
+  const hit=(r)=> placed.some(p=> !(r.x+r.w<=p.x-2 || r.x>=p.x+p.w+2 || r.y+r.h<=p.y-1 || r.y>=p.y+p.h+1));
+  for(const l of LBL){
+    const w=ctx.measureText(l.t).width+8, h=14;
+    const bx=clamp(l.x-(l.a==='center'?w/2:l.a==='right'?w:0), 2, W-w-2);
+    const by=l.y-h+3.5;
+    let ok=null;
+    for(const dy of l.tr){
+      const r={x:bx,y:by+dy,w:w,h:h};
+      if(r.y<1 || r.y+h>H-1) continue;
+      if(!hit(r)){ ok=r; break; }
+    }
+    if(!ok) continue;
+    placed.push(ok);
+    ctx.fillStyle=l.bg||'rgba(8,11,18,.88)';
+    ctx.beginPath(); ctx.roundRect(ok.x,ok.y,w,h,4); ctx.fill();
+    ctx.fillStyle=l.c; ctx.textAlign='left';
+    ctx.fillText(l.t, ok.x+4, ok.y+h-4);
+  }
+  LBL=[];
+}
+
+function draw(){
+  const sol = recompute();
+  const V = VIEW = computeView(sol);
+  const tol = S.tolCm/100;
+  const x2p=V.x2p, y2p=V.y2p;
+  const L=PAD.l, R=W-PAD.r, T=PAD.t, B=H-PAD.b;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#080b12'; ctx.fillRect(0,0,W,H);
+
+  /* --- faixa de tolerância --- */
+  const ytA=y2p(tol), ytB=y2p(-tol);
+  ctx.fillStyle='rgba(76,194,255,.065)';
+  ctx.fillRect(L, Math.min(ytA,ytB), R-L, Math.abs(ytB-ytA));
+  ctx.setLineDash([3,4]); ctx.strokeStyle='rgba(76,194,255,.22)'; ctx.lineWidth=1;
+  [ytA,ytB].forEach(yy=>{ if(yy>T+2 && yy<B-2){ ctx.beginPath(); ctx.moveTo(L,yy); ctx.lineTo(R,yy); ctx.stroke(); } });
+  ctx.setLineDash([]);
+
+  /* --- grade --- */
+  const stepX = niceStep(S.range, 6);
+  ctx.lineWidth=1; ctx.font='500 9.5px -apple-system,system-ui,sans-serif'; ctx.textBaseline='alphabetic';
+  for(let x=stepX; x<=S.range+1e-6; x+=stepX){
+    const px=x2p(x);
+    ctx.strokeStyle='rgba(255,255,255,.045)';
+    ctx.beginPath(); ctx.moveTo(px,T); ctx.lineTo(px,B); ctx.stroke();
+    ctx.fillStyle='#5c6880'; ctx.textAlign='center';
+    const xl = nf(x,0)+(x>=S.range-1e-6?' m':'');
+    ctx.fillText(xl, clamp(px, 12, R+PAD.r-ctx.measureText(xl).width/2-2), H-8);
+  }
+  const spanCm=(V.yMax-V.yMin)*100, stepY=niceStep(spanCm,4)/100;
+  for(let k=Math.ceil(V.yMin/stepY); k<=Math.floor(V.yMax/stepY); k++){
+    const y=k*stepY, py=y2p(y);
+    if(Math.abs(y)<1e-9) continue;
+    ctx.strokeStyle='rgba(255,255,255,.038)';
+    ctx.beginPath(); ctx.moveTo(L,py); ctx.lineTo(R,py); ctx.stroke();
+    ctx.fillStyle='#4e5a70'; ctx.textAlign='left';
+    ctx.fillText(sg(y*100,spanCm<8?1:0), R+5, py+3.2);
+  }
+  ctx.fillStyle='#5c6880'; ctx.textAlign='left'; ctx.font='600 9px -apple-system,system-ui,sans-serif';
+  ctx.fillText('cm', R+5, T-4);
+
+  /* --- eixo do cano (prolongamento) --- */
+  const sh=S.shMm/1000, tanA=Math.tan(sol.angle);
+  ctx.save(); ctx.beginPath(); ctx.rect(L,T,R-L,B-T); ctx.clip();
+  ctx.setLineDash([1.5,3.5]); ctx.strokeStyle='rgba(255,200,97,.62)'; ctx.lineWidth=1.3;
+  ctx.beginPath(); ctx.moveTo(x2p(0), y2p(-sh)); ctx.lineTo(x2p(S.range), y2p(-sh + tanA*S.range)); ctx.stroke();
+  ctx.restore();
+
+  /* --- linha de visada --- */
+  ctx.setLineDash([6,4]); ctx.strokeStyle='#4cc2ff'; ctx.lineWidth=1.6;
+  ctx.beginPath(); ctx.moveTo(L,y2p(0)); ctx.lineTo(R,y2p(0)); ctx.stroke();
+  ctx.setLineDash([]);
+
+  /* --- faixa útil --- */
+  if(sol.useful){
+    const a=x2p(clamp(sol.useful.near,0,S.range)), b=x2p(clamp(sol.useful.far,0,S.range));
+    if(b-a>2){
+      ctx.strokeStyle='#3ddc97'; ctx.lineWidth=3; ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(a,B-2); ctx.lineTo(b,B-2); ctx.stroke();
+      ctx.lineCap='butt';
+    }
+  }
+
+  /* --- trajetória --- */
+  ctx.save(); ctx.beginPath(); ctx.rect(L-1,T-1,R-L+2,B-T+2); ctx.clip();
+  ctx.beginPath();
+  const xs=sol.traj.xs, ys=sol.traj.ys;
+  let started=false;
+  for(let i=0;i<sol.traj.n;i++){
+    if(xs[i]>S.range) break;
+    const px=x2p(xs[i]), py=y2p(ys[i]);
+    if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+  }
+  ctx.strokeStyle='#ff5252'; ctx.lineWidth=2.6; ctx.lineJoin='round';
+  ctx.shadowColor='rgba(255,82,82,.55)'; ctx.shadowBlur=8;
+  ctx.stroke(); ctx.shadowBlur=0;
+  ctx.restore();
+
+  /* --- alvos --- */
+  const hy0 = T+12;
+  const zoneVisible = Math.abs(y2p(-tol)-y2p(tol)) < (B-T)*0.82;
+  let lastLblRight = -1e9;
+  const rows = {}; let maxRow = 0; {
+    const ord = S.targets.map((d,i)=>({d:d,i:i})).filter(o=>o.d<=S.range).sort((a,b)=>a.d-b.d);
+    const lastPx = [-1e9,-1e9,-1e9];
+    ord.forEach(o=>{ const px=x2p(o.d);
+      let r = lastPx.findIndex(v => px - v >= 19);
+      if(r < 0) r = 0;
+      lastPx[r] = px; rows[o.i] = r; if(r>maxRow) maxRow = r; });
+  }
+  const lblY = hy0 + maxRow*19 + 24;
+  S.targets.forEach((d,i)=>{
+    if(d>S.range) return;
+    const hy = hy0 + (rows[i]||0)*19;
+    const px=x2p(d), s=sol.at(d), sel=(i===S.sel);
+    const ok=isFinite(s.y);
+    const inZone = ok && Math.abs(s.y)<=tol;
+
+    ctx.strokeStyle = sel?'rgba(61,220,151,.85)':'rgba(61,220,151,.17)';
+    ctx.lineWidth = sel?1.5:1;
+    ctx.beginPath(); ctx.moveTo(px,hy+9); ctx.lineTo(px,B-7); ctx.stroke();
+    if(zoneVisible){
+      ctx.strokeStyle = sel?'rgba(61,220,151,.95)':'rgba(61,220,151,.40)';
+      ctx.lineWidth = sel?4:2.5;
+      ctx.beginPath(); ctx.moveTo(px,y2p(tol)); ctx.lineTo(px,y2p(-tol)); ctx.stroke();
+    }
+
+    if(ok){
+      const py=y2p(s.y);
+      ctx.fillStyle='#ff5252'; ctx.strokeStyle='#0a0d14'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(px,py,sel?5.2:3.6,0,7); ctx.fill(); ctx.stroke();
+    }
+    // punho de arraste
+    ctx.fillStyle = sel?'#3ddc97':'#1a5c40';
+    ctx.strokeStyle = sel?'#0a0d14':'rgba(61,220,151,.7)'; ctx.lineWidth=sel?2:1.4;
+    ctx.beginPath(); ctx.arc(px,hy,sel?9.5:7,0,7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = sel?'#06170f':'#9fe9c6';
+    ctx.font='700 '+(sel?10:9)+'px -apple-system,system-ui,sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(String(i+1), px, hy+.5);
+    ctx.textBaseline='alphabetic';
+
+    // rótulos empilhados abaixo do punho (só se houver espaço horizontal)
+    const txt = ok ? sg(s.y*100,1)+' cm' : '—';
+    ctx.font='600 10px -apple-system,system-ui,sans-serif';
+    const wNeed = Math.max(ctx.measureText(txt).width, ctx.measureText(nf(d,1)+' m').width)+10;
+    if(sel || px - lastLblRight > wNeed){
+      label(px, lblY,    nf(d,1)+' m', '#3ddc97','center', sel?0:3, DOWN);
+      label(px, lblY+14, txt, inZone?'#8affc8':'#ff8f8f','center', sel?0:3, DOWN);
+      lastLblRight = px + wNeed/2;
+    }
+  });
+
+  /* --- marcadores de zero --- */
+  const zeros=[];
+  if(sol.zero1!=null) zeros.push([sol.zero1, sol.tangent?'zero':'1º zero']);
+  if(sol.zero2!=null && !sol.tangent) zeros.push([sol.zero2,'2º zero']);
+  zeros.forEach(([zx,lbl])=>{
+    if(zx>S.range || zx<0) return;
+    const px=x2p(zx), py=y2p(0);
+    ctx.setLineDash([2,3]); ctx.strokeStyle='rgba(255,200,97,.45)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,B-8); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#ffc861'; ctx.strokeStyle='#0a0d14'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(px,py,4.2,0,7); ctx.fill(); ctx.stroke();
+    label(px, B-10, lbl+' '+nf(zx,zx<10?1:0)+' m', '#ffc861','center', 1, [0,-16,-32,-48]);
+  });
+  if(sol.zero2!=null && sol.zero2>S.range && !sol.tangent){
+    label(R, T+13, '2º zero '+nf(sol.zero2,0)+' m →', '#ffc861','right', 1, DOWN);
+  }
+
+  /* --- ápice --- */
+  if(sol.apex.y>0.004 && sol.apex.y>(V.yMax-V.yMin)*0.03 && sol.apex.x<=S.range && sol.apex.x>0.5){
+    const px=x2p(sol.apex.x), py=y2p(sol.apex.y);
+    ctx.fillStyle='#b48cff';
+    ctx.beginPath(); ctx.moveTo(px,py-4.5); ctx.lineTo(px+4.5,py); ctx.lineTo(px,py+4.5); ctx.lineTo(px-4.5,py); ctx.closePath(); ctx.fill();
+    label(px, py-9, 'ápice '+sg(sol.apex.y*100,1)+' cm', '#b48cff','center', 2, [0,-16,-32,16,32]);
+  }
+
+  /* --- esquema da arma --- */
+  const x0=x2p(0), yLos=y2p(0), yBore=y2p(-sh);
+  ctx.strokeStyle='rgba(150,170,200,.6)'; ctx.lineWidth=2.4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x0-26,yBore); ctx.lineTo(x0+3,yBore); ctx.stroke();   // cano
+  ctx.lineWidth=1.8;
+  ctx.beginPath(); ctx.moveTo(x0-17,yLos+4); ctx.lineTo(x0-17,yBore); ctx.stroke(); // mount
+  ctx.lineCap='butt';
+  ctx.fillStyle='#101a2b'; ctx.strokeStyle='rgba(76,194,255,.85)'; ctx.lineWidth=1.4;
+  ctx.beginPath(); ctx.roundRect(x0-26,yLos-6,19,12,3); ctx.fill(); ctx.stroke();   // dot
+  ctx.fillStyle='#ff5252'; ctx.beginPath(); ctx.arc(x0-16.5,yLos,1.8,0,7); ctx.fill();
+  if(Math.abs(yBore-yLos)>26){
+    ctx.strokeStyle='rgba(150,170,200,.5)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x0-6,yLos+3); ctx.lineTo(x0-6,yBore-3); ctx.stroke();
+    label(x0+4, (yLos+yBore)/2+4, nf(S.shMm,0)+' mm', '#9fb0cc','left', 4, [0,-15,15]);
+  }
+
+  flushLabels();
+
+  /* --- rótulo de escala --- */
+  ctx.fillStyle='#3d4759'; ctx.font='500 9px -apple-system,system-ui,sans-serif'; ctx.textAlign='left';
+  ctx.fillText('vertical ×'+nf(V.exag,0), 3, 10);
+}
+
+/* ---------- arrastar alvos ---------- */
+let drag=-1;
+function pickTarget(px){
+  if(!VIEW) return -1;
+  let best=-1, bd=26;
+  S.targets.forEach((d,i)=>{ if(d>S.range) return; const dd=Math.abs(VIEW.x2p(d)-px); if(dd<bd){bd=dd;best=i;} });
+  return best;
+}
+cv.addEventListener('pointerdown', e=>{
+  const r=cv.getBoundingClientRect(), px=e.clientX-r.left;
+  const i=pickTarget(px);
+  if(i>=0){ drag=i; S.sel=i; cv.setPointerCapture(e.pointerId); hideHint(); draw(); renderTargets(); }
+});
+cv.addEventListener('pointermove', e=>{
+  if(drag<0) return;
+  e.preventDefault();
+  const r=cv.getBoundingClientRect();
+  const snap = S.range<=120?0.5:1;
+  let d = VIEW.p2x(e.clientX-r.left);
+  d = clamp(Math.round(d/snap)*snap, 1, S.range);
+  if(d!==S.targets[drag]){ S.targets[drag]=d; draw(); renderStats(); renderTargets(); }
+});
+function endDrag(){ if(drag>=0){ drag=-1; save(); renderTable(); } }
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+let hintDone=false;
+function hideHint(){ if(hintDone) return; hintDone=true; const h=$('#vizhint'); if(!h) return; h.style.opacity=0; setTimeout(()=>{ if(h.parentNode) h.remove(); },600); }
+setTimeout(hideHint, 4500);
+
+/* =======================================================
+   RENDER DOS PAINÉIS
+   ======================================================= */
+function renderStats(){
+  const sol=recompute(), el=$('#stats');
+  const z2 = sol.zero2!=null && !sol.tangent ? nf(sol.zero2, sol.zero2<20?1:0)+' m' : '—';
+  const uf = sol.useful ? nf(sol.useful.near,0)+'–'+nf(sol.useful.far,0)+' m' : '—';
+  const endY = sol.at(S.range);
+  const items = [
+    ['1º zero', sol.zero1!=null? nf(sol.zero1,sol.zero1<20?1:0)+' m':'—', 'z1'],
+    ['2º zero', z2, 'z2'],
+    ['Ápice', sol.apex.y>0.0005? sg(sol.apex.y*100,1)+' cm @ '+nf(sol.apex.x,0)+' m' : '—', 'ap'],
+    ['Faixa útil ±'+nf(S.tolCm,S.tolCm%1?1:0)+' cm', uf, 'uf'],
+    ['Ângulo do cano', nf(sol.angle*1000,2)+' mrad', ''],
+    ['Impacto a '+nf(S.range,0)+' m', isFinite(endY.y)? sg(endY.y*100,1)+' cm':'—', '']
+  ];
+  el.innerHTML = items.map(([k,v,c])=>'<div class="stat '+c+'"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>').join('');
+
+  const a = AMMO.find(x=>x.id===S.ammo);
+  $('#hdrSub').textContent = nf(S.gr,0)+' gr · '+nf(S.fps,0)+' fps · mira '+nf(S.shMm,0)+' mm · zero '+nf(S.zero,0)+' m';
+
+  // explicação da zeragem
+  const ex=$('#zeroExplain');
+  if(sol.impossible){
+    ex.innerHTML='<span style="color:#ffb020">Essa munição não alcança a linha de visada nessa distância. Reduza a zeragem.</span>';
+  } else if(sol.tangent){
+    ex.innerHTML='Nessa zeragem a trajetória fica <b>tangente</b> à linha de visada: ela sobe até encostar em '+nf(S.zero,1)+' m e já começa a cair. É o ajuste mais "plano" possível com essa altura de mira.';
+  } else if(sol.zeroIsWhich===1){
+    ex.innerHTML='Zerando em <b>'+nf(S.zero,1)+' m</b> essa é a <b>1ª cruzada</b> (bala subindo). A bala volta a cruzar a visada em <b>'+nf(sol.zero2,sol.zero2<20?1:0)+' m</b> — esse é o 2º zero.';
+  } else {
+    ex.innerHTML='Zerando em <b>'+nf(S.zero,1)+' m</b> essa é a <b>2ª cruzada</b> (bala descendo). Antes disso ela já tinha cruzado a visada em <b>'+nf(sol.zero1,sol.zero1<20?1:0)+' m</b> — esse é o 1º zero.';
+  }
+
+  // readouts de munição
+  const pf = S.gr*S.fps/1000;
+  $('#roV').textContent = nf(S.fps,0)+' fps · '+nf(S.fps*0.3048,0)+' m/s';
+  $('#roPf').textContent = nf(pf,0);
+  $('#roE').textContent = nf(sol.muzzleEnergyJ,0)+' J';
+  $('#roRho').textContent = nf(ENV.rho,3)+' kg/m³';
+  $('#roC').textContent = nf(ENV.c,0)+' m/s';
+  $('#roM').textContent = nf(sol.v0/ENV.c,2);
+  $('#vzLbl').textContent = S.vauto? 'automática' : '×'+nf(VIEW?VIEW.exag:0,0);
+}
+
+function renderTargets(){
+  const sol=recompute(), tol=S.tolCm/100;
+  $('#tgtList').innerHTML = S.targets.map((d,i)=>{
+    const s=sol.at(d), ok=isFinite(s.y);
+    const cls = !ok?'':(Math.abs(s.y)<=tol?'hit-ok':(s.y>0?'hit-hi':'hit-lo'));
+    return '<div class="tgt'+(i===S.sel?' sel':'')+'" data-i="'+i+'">'+
+      '<div class="th"><span class="dot"></span><span class="nm">Alvo '+(i+1)+'</span>'+
+      '<div class="dist"><button class="stp" data-act="-" data-i="'+i+'">−</button>'+
+      '<input type="text" inputmode="decimal" class="tdist" data-i="'+i+'" value="'+nf(d,1)+'">'+
+      '<span class="un" style="font-size:12px;color:#66738c">m</span>'+
+      '<button class="stp" data-act="+" data-i="'+i+'">+</button></div>'+
+      '<button class="del" data-i="'+i+'">×</button></div>'+
+      '<div class="ro-row">'+
+        '<div class="ro"><div class="k">Impacto</div><div class="v '+cls+'">'+(ok?sg(s.y*100,1)+' cm':'—')+'</div></div>'+
+        '<div class="ro"><div class="k">Velocidade</div><div class="v">'+(ok?nf(s.v*MS_FPS,0)+' fps':'—')+'</div></div>'+
+        '<div class="ro"><div class="k">Energia</div><div class="v">'+(ok?nf(s.energyJ,0)+' J':'—')+'</div></div>'+
+        '<div class="ro"><div class="k">Tempo</div><div class="v">'+(ok?nf(s.t,3)+' s':'—')+'</div></div>'+
+      '</div></div>';
+  }).join('');
+}
+
+function renderTable(){
+  const sol=recompute(), tol=S.tolCm/100;
+  const marks=new Map();
+  const add=(d,tag)=>{ if(d==null||d<0||d>S.range+1e-6) return; const k=Math.round(d*10)/10; if(!marks.has(k)||tag) marks.set(k, marks.get(k)||tag); };
+  for(let d=S.step; d<=S.range+1e-6; d+=S.step) add(d,null);
+  add(sol.zero1,'zero'); if(!sol.tangent) add(sol.zero2,'zero');
+  S.targets.forEach(d=>add(d,'tgt-row'));
+  const ds=Array.from(marks.keys()).sort((a,b)=>a-b);
+
+  $('#tbl thead').innerHTML='<tr><th>Dist</th><th>Impacto</th><th>Vel</th><th>Vel</th><th>Energia</th><th>Tempo</th></tr>'+
+    '<tr style="font-size:8.5px"><th>m</th><th>cm</th><th>fps</th><th>m/s</th><th>J</th><th>s</th></tr>';
+  $('#tbl tbody').innerHTML = ds.map(d=>{
+    const s=sol.at(d), ok=isFinite(s.y), tag=marks.get(d)||'';
+    const cls = !ok?'':(Math.abs(s.y)<=tol?'hit-ok':(s.y>0?'hit-hi':'hit-lo'));
+    return '<tr class="'+tag+'"><td>'+nf(d,d%1?1:0)+'</td>'+
+      '<td class="'+cls+'">'+(ok?sg(s.y*100,1):'—')+'</td>'+
+      '<td>'+(ok?nf(s.v*MS_FPS,0):'—')+'</td>'+
+      '<td>'+(ok?nf(s.v,0):'—')+'</td>'+
+      '<td>'+(ok?nf(s.energyJ,0):'—')+'</td>'+
+      '<td>'+(ok?nf(s.t,3):'—')+'</td></tr>';
+  }).join('');
+}
+
+function sortTargets(){
+  const cur = S.targets[S.sel];
+  S.targets.sort((a,b)=>a-b);
+  const i = S.targets.indexOf(cur);
+  S.sel = i>=0 ? i : clamp(S.sel,0,S.targets.length-1);
+}
+let raf=0;
+function refresh(all){
+  sortTargets();
+  cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(()=>{ draw(); renderStats(); renderTargets(); if(all!==false) renderTable(); });
+  save();
+}
+
+/* =======================================================
+   CONTROLES
+   ======================================================= */
+function chipsInto(el, list, getVal, onPick, fmtLbl){
+  el.innerHTML = list.map(v=>'<button class="chip sm" data-v="'+v+'">'+(fmtLbl?fmtLbl(v):v)+'</button>').join('');
+  const sync=()=>$$('.chip',el).forEach(b=> b.classList.toggle('on', String(getVal())===b.dataset.v));
+  el.addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; onPick(parseFloat(b.dataset.v)); sync(); });
+  el._sync=sync; sync();
+}
+function linkNum(idN, idR, get, set, opts){
+  const n=$(idN), r=$(idR); opts=opts||{};
+  const toR = opts.toR || (v=>v), fromR = opts.fromR || (v=>v);
+  const mn = opts.min!=null?opts.min:parseFloat(n.min), mx = opts.max!=null?opts.max:parseFloat(n.max);
+  const sync=()=>{ if(document.activeElement!==n) n.value = opts.fmt? opts.fmt(get()) : get(); r.value = toR(get()); };
+  n.addEventListener('input', ()=>{ const v=parseFloat(String(n.value).replace(',','.')); if(isFinite(v)){ set(clamp(v, mn, mx)); r.value=toR(get()); refresh(); } });
+  n.addEventListener('blur', sync);
+  r.addEventListener('input', ()=>{ set(fromR(parseFloat(r.value))); n.value = opts.fmt? opts.fmt(get()) : get(); refresh(); });
+  return sync;
+}
+
+/* --- arma --- */
+$('#gunType').innerHTML = GUNS.map(g=>'<button class="chip" data-v="'+g.id+'">'+g.n+'</button>').join('');
+$('#sightType').innerHTML = SIGHTS.map(g=>'<button class="chip" data-v="'+g.id+'">'+g.n+'</button>').join('');
+function syncGun(){
+  $$('#gunType .chip').forEach(b=>b.classList.toggle('on', b.dataset.v===S.gun));
+  $$('#sightType .chip').forEach(b=>b.classList.toggle('on', b.dataset.v===S.sight));
+}
+function applySight(){
+  const s=SIGHTS.find(x=>x.id===S.sight);
+  S.shMm = s.sh[S.gun] || s.sh.pistola;
+  syncSh(); syncShChips();
+}
+$('#gunType').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return;
+  S.gun=b.dataset.v; const g=GUNS.find(x=>x.id===S.gun); S.zero=g.zero; applySight(); syncGun(); syncZ(); syncZChips(); refresh(); });
+$('#sightType').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return;
+  S.sight=b.dataset.v; applySight(); syncGun(); refresh(); });
+
+const syncSh = linkNum('#shN','#shR', ()=>S.shMm, v=>S.shMm=v);
+let syncShChips;
+chipsInto($('#shChips'), [15,20,25,32,40,50,63,67,76], ()=>S.shMm, v=>{S.shMm=v; syncSh(); refresh();}, v=>v+' mm');
+syncShChips = $('#shChips')._sync;
+
+const syncZ = linkNum('#zN','#zR', ()=>S.zero, v=>S.zero=v);
+let syncZChips;
+chipsInto($('#zChips'), [5,10,15,20,25,36,50,100,200], ()=>S.zero, v=>{S.zero=v; syncZ(); refresh();}, v=>v+' m');
+syncZChips = $('#zChips')._sync;
+
+const syncR = linkNum('#rN','#rR', ()=>S.range, v=>S.range=v);
+chipsInto($('#rChips'), [25,50,100,150,200,300], ()=>S.range, v=>{S.range=v; syncR(); refresh();}, v=>v+' m');
+
+$('#vzR').addEventListener('input', ()=>{ S.vauto=false; S.vzoom=parseFloat($('#vzR').value); refresh(false); });
+$('#vzAuto').addEventListener('click', ()=>{ S.vauto=true; S.vzoom=50; $('#vzR').value=50; refresh(false); });
+
+/* --- munição --- */
+(function(){
+  const groups=[]; AMMO.forEach(a=>{ let g=groups.find(x=>x.n===a.g); if(!g){g={n:a.g,items:[]};groups.push(g);} g.items.push(a); });
+  $('#ammoSel').innerHTML = groups.map(g=>'<optgroup label="'+g.n+'">'+g.items.map(a=>'<option value="'+a.id+'">'+a.n+'</option>').join('')+'</optgroup>').join('');
+})();
+$('#ammoSel').addEventListener('change', e=>{
+  const a=AMMO.find(x=>x.id===e.target.value); if(!a) return;
+  S.ammo=a.id;
+  if(a.id!=='o-custom'){ S.gr=a.gr; S.bc=a.bc; S.fps=a.fps; syncGr(); syncBc(); syncV(); syncPf(); }
+  refresh();
+});
+const syncGr = linkNum('#grN','#grR', ()=>S.gr, v=>{S.gr=v; S.ammo='o-custom'; $('#ammoSel').value='o-custom'; if(S.velMode==='pf'){ S.fps=clamp(S.pf*1000/S.gr,200,4500); syncV(); }});
+const syncBc = linkNum('#bcN','#bcR', ()=>S.bc, v=>{S.bc=v; S.ammo='o-custom'; $('#ammoSel').value='o-custom';},
+  {toR:v=>Math.round(v*1000), fromR:v=>v/1000, fmt:v=>v.toFixed(3).replace('.',','), min:0.03, max:1.2});
+const syncV  = linkNum('#vN','#vR',  ()=>S.fps, v=>{S.fps=v; S.ammo='o-custom'; $('#ammoSel').value='o-custom'; S.pf=S.gr*S.fps/1000; syncPf();});
+S.pf = S.pf || S.gr*S.fps/1000;
+const syncPf = linkNum('#pfN','#pfR', ()=>Math.round(S.gr*S.fps/1000), v=>{S.pf=v; S.fps=clamp(v*1000/S.gr,200,4500); S.ammo='o-custom'; $('#ammoSel').value='o-custom'; syncV();});
+
+$('#velMode').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  S.velMode=b.dataset.m;
+  $$('#velMode button').forEach(x=>x.classList.toggle('on', x.dataset.m===S.velMode));
+  $('#fldFps').style.display = S.velMode==='fps'?'':'none';
+  $('#fldPf').style.display  = S.velMode==='pf'?'':'none';
+  syncPf(); save();
+});
+
+const syncT = linkNum('#tN','#tR', ()=>S.tempC, v=>S.tempC=v);
+const syncA = linkNum('#aN','#aR', ()=>S.altM, v=>S.altM=v);
+const syncU = linkNum('#uN','#uR', ()=>S.rh, v=>S.rh=v);
+
+/* --- alvos --- */
+const syncTol = linkNum('#tolN','#tolR', ()=>S.tolCm, v=>S.tolCm=v);
+chipsInto($('#tolChips'), [2.5,5,7.5,10,15,20,30], ()=>S.tolCm, v=>{S.tolCm=v; syncTol(); refresh();}, v=>'±'+String(v).replace('.',',')+' cm');
+
+$('#tgtPresets').innerHTML=[3,5,7,10,12,15,20,25,30,35,40,50,75,100].map(d=>'<button class="chip sm" data-v="'+d+'">'+d+' m</button>').join('');
+$('#tgtPresets').addEventListener('click', e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  const d=parseFloat(b.dataset.v);
+  const ex=S.targets.findIndex(t=>Math.abs(t-d)<0.6);
+  if(ex>=0){ S.sel=ex; refresh(false); return; }
+  if(S.targets.length>=8) S.targets.shift();
+  S.targets.push(d); S.sel=S.targets.length-1;
+  if(d>S.range){ S.range=Math.ceil(d/25)*25; syncR(); }
+  refresh();
+});
+$('#addTgt').addEventListener('click', ()=>{
+  if(S.targets.length>=8) return;
+  const last=S.targets.length?Math.max.apply(null,S.targets):10;
+  S.targets.push(clamp(Math.round(last*1.5), 1, S.range)); S.sel=S.targets.length-1; refresh();
+});
+$('#tgtList').addEventListener('click', e=>{
+  const del=e.target.closest('.del');
+  if(del){ S.targets.splice(+del.dataset.i,1); if(!S.targets.length) S.targets=[15]; S.sel=clamp(S.sel,0,S.targets.length-1); refresh(); return; }
+  const stp=e.target.closest('.stp');
+  if(stp){ const i=+stp.dataset.i, snap=S.range<=120?0.5:1;
+    S.targets[i]=clamp(S.targets[i]+(stp.dataset.act==='+'?snap:-snap),1,600); S.sel=i; refresh(); return; }
+  const card=e.target.closest('.tgt');
+  if(card){ S.sel=+card.dataset.i; refresh(false); }
+});
+$('#tgtList').addEventListener('input', e=>{
+  const inp=e.target.closest('.tdist'); if(!inp) return;
+  const v=parseFloat(String(inp.value).replace(',','.'));
+  if(isFinite(v)){ S.targets[+inp.dataset.i]=clamp(v,1,600); S.sel=+inp.dataset.i; cancelAnimationFrame(raf); raf=requestAnimationFrame(()=>{draw();renderStats();renderTable();}); save(); }
+});
+
+/* --- tabela --- */
+chipsInto($('#stepChips'), [1,2,5,10,25,50], ()=>S.step, v=>{S.step=v; renderTable();}, v=>v+' m');
+
+/* --- abas --- */
+$$('nav button').forEach(b=> b.addEventListener('click', ()=>{
+  $$('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('section').forEach(s=> s.classList.toggle('on', s.dataset.tab===b.dataset.tab));
+  const m=$('main'); if(m) m.scrollTop=0;
+  if(b.dataset.tab==='tab') renderTable();
+}));
+
+/* --- perfis --- */
+function profs(){ return store.get('bal.profiles.v2', []); }
+function renderProfs(){
+  const p=profs();
+  $('#profSel').innerHTML='<option value="">— escolher perfil —</option>'+p.map((x,i)=>'<option value="'+i+'">'+x.name+'</option>').join('');
+}
+$('#profSave').addEventListener('click', ()=>{
+  const name=prompt('Nome do perfil (ex.: Glock 34 + dot):','');
+  if(!name) return;
+  const p=profs(); p.push({name:name, s:JSON.parse(JSON.stringify(S))});
+  store.set('bal.profiles.v2', p); renderProfs(); $('#profSel').value=String(p.length-1);
+});
+$('#profSel').addEventListener('change', e=>{
+  const i=e.target.value; if(i==='') return;
+  const p=profs()[+i]; if(!p) return;
+  S=Object.assign({}, DEFAULTS, p.s); syncAll(); refresh();
+});
+$('#profDel').addEventListener('click', ()=>{
+  const i=$('#profSel').value; if(i==='') return;
+  const p=profs(); p.splice(+i,1); store.set('bal.profiles.v2',p); renderProfs();
+});
+$('#resetAll').addEventListener('click', ()=>{
+  if(!confirm('Restaurar tudo para o padrão?')) return;
+  S=JSON.parse(JSON.stringify(DEFAULTS)); syncAll(); refresh();
+});
+
+/* --- sincronização geral --- */
+function syncAll(){
+  syncGun(); syncSh(); syncShChips(); syncZ(); syncZChips(); syncR();
+  syncGr(); syncBc(); syncV(); syncPf(); syncT(); syncA(); syncU(); syncTol();
+  $('#ammoSel').value=S.ammo;
+  $('#vzR').value=S.vzoom;
+  $$('#velMode button').forEach(x=>x.classList.toggle('on', x.dataset.m===S.velMode));
+  $('#fldFps').style.display = S.velMode==='fps'?'':'none';
+  $('#fldPf').style.display  = S.velMode==='pf'?'':'none';
+  $$('.chips').forEach(el=> el._sync && el._sync());
+}
+
+/* --- boot --- */
+function showBootError(e){
+  try{
+    const d=document.createElement('div'); d.id='booterr';
+    d.textContent='Erro ao iniciar o app:\n'+(e && (e.stack||e.message) || e)+
+      '\n\nMande esta mensagem para eu corrigir.';
+    document.body.appendChild(d);
+  }catch(_){ }
+}
+function boot(){
+  try{ fitCanvas(); syncAll(); renderProfs(); refresh(); }
+  catch(e){ showBootError(e); throw e; }
+}
+let rz; window.addEventListener('resize', ()=>{ clearTimeout(rz); rz=setTimeout(()=>{ fitCanvas(); refresh(false); },120); });
+window.addEventListener('orientationchange', ()=> setTimeout(()=>{ fitCanvas(); refresh(false); },320));
+document.addEventListener('gesturestart', e=>e.preventDefault());
+if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
+
+})();
+
+</script>
+</body>
+</html>
