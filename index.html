@@ -30,7 +30,7 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 #app{
-  display:grid; grid-template-rows:auto auto auto auto 1fr;
+  display:grid; grid-template-rows:auto auto auto auto auto 1fr;
   height:100dvh; max-height:100dvh; overflow:hidden;
   padding-top:env(safe-area-inset-top);
 }
@@ -241,7 +241,7 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
 .btn.dgr{background:#3a1720;border-color:#7a2b3a;color:#ffbcc6}
 
 /* ---------- visor de alvo ---------- */
-#aimCv{display:block;width:100%;height:215px;margin-top:11px}
+#aimCv{display:block;width:100%;height:42dvh;min-height:230px;max-height:380px}
 .aimtxt{
   font-size:13px;line-height:1.5;color:var(--mu);margin-top:9px;
   padding-top:10px;border-top:1px solid var(--line2)
@@ -251,6 +251,37 @@ tbody tr.tgt-row td:first-child{box-shadow:inset 2px 0 0 var(--gr)}
 tbody tr{cursor:pointer}
 tbody tr.rowsel td{background:rgba(76,194,255,.13)}
 tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
+
+/* ---------- barra de visualização ---------- */
+#vizbar{padding:7px 12px;background:var(--panel2);border-bottom:1px solid var(--line2)}
+.seg.tiny button{font-size:12px;padding:7px 4px}
+#aimbar{padding:9px 12px 11px;background:var(--panel2);border-bottom:1px solid var(--line2)}
+#aimbar[hidden]{display:none}
+#stats[hidden]{display:none}
+#aimbar .chips{margin-top:9px}
+#aimbar .aimtxt{margin-top:9px;padding-top:9px;font-size:12.5px}
+#cv[hidden],#aimCv[hidden]{display:none}
+
+/* ---------- folha modal ---------- */
+#sheet{
+  position:fixed;inset:0;z-index:950;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(4,6,11,.6);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  animation:mfade .18s ease
+}
+#sheet[hidden]{display:none}
+.shbox{
+  width:100%;max-width:480px;background:var(--panel);
+  border:1px solid var(--line);border-bottom:0;
+  border-radius:20px 20px 0 0;padding:8px 16px calc(18px + env(safe-area-inset-bottom));
+  max-height:88dvh;overflow-y:auto;
+  box-shadow:0 -10px 40px rgba(0,0,0,.6);
+  animation:shup .26s cubic-bezier(.22,.9,.28,1)
+}
+@keyframes shup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.grab{width:38px;height:5px;border-radius:3px;background:#39445a;margin:2px auto 12px}
+.shttl{font-size:17px;font-weight:650;margin-bottom:12px}
+#shCv{display:block;width:100%;height:230px;border-radius:12px;background:#0a0e17}
+#shTxt{margin-top:10px}
 
 </style>
 </head>
@@ -272,12 +303,28 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
     <div class="sub" id="hdrSub">—</div>
   </header>
 
+  <div id="vizbar">
+    <div class="seg tiny" id="viewMode">
+      <button data-v="curva" class="on">Curva balística</button>
+      <button data-v="alvo">Vista do alvo</button>
+    </div>
+  </div>
+
   <div id="viz">
     <canvas id="cv"></canvas>
-    <div id="vizhint">arraste as bolinhas verdes para mover os alvos</div>
+    <canvas id="aimCv" hidden></canvas>
+    <div id="vizhint">arraste os alvos · toque para abrir</div>
   </div>
 
   <div id="stats"></div>
+  <div id="aimbar" hidden>
+    <div class="seg tiny" id="aimMode">
+      <button data-m="none" class="on">Mirando no centro</button>
+      <button data-m="comp">Compensando</button>
+    </div>
+    <div class="chips nowrap" id="aimDist"></div>
+    <div id="aimTxt" class="aimtxt"></div>
+  </div>
 
   <nav>
     <button data-tab="arma" class="on">Arma</button>
@@ -316,6 +363,19 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
       </div>
 
       <div class="grp">
+        <h2>Comprimento do cano</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Cano da <b>sua</b> arma</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="bblN" min="2" max="30"><span class="un">pol</span>
+          </div>
+          <input type="range" id="bblR" min="2" max="30" step="0.5">
+          <div class="chips nowrap" id="bblChips"></div>
+        </div>
+        <p class="note">Os presets vêm com um cano de referência. Mudando aqui, a velocidade é reestimada — cano mais longo queima mais pólvora e ganha velocidade, cano curto perde. <b>É estimativa:</b> se você tem cronógrafo, informe a velocidade medida direto na aba Munição.</p>
+      </div>
+
+      <div class="grp">
         <h2>Zeragem</h2>
         <div class="fld">
           <div class="fhd">
@@ -331,12 +391,10 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
       <div class="grp">
         <h2>Tela</h2>
         <div class="fld">
-          <div class="fhd">
-            <span class="nm">Distância máxima do gráfico</span>
-            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="rN" min="10" max="600"><span class="un">m</span>
-          </div>
-          <input type="range" id="rR" min="10" max="600" step="5">
-          <div class="chips nowrap" id="rChips"></div>
+          <div class="fhd"><span class="nm">Zoom horizontal</span><span class="un" id="hzLbl">—</span></div>
+          <input type="range" id="hzR" min="0" max="100" step="1">
+          <div class="chips"><button class="chip sm" id="hzAll">Ver tudo</button></div>
+          <p class="note">Com zoom, <b>arraste o gráfico para o lado</b> para percorrer a trajetória. Dois dedos aproximam e afastam.</p>
         </div>
         <div class="fld">
           <div class="fhd"><span class="nm">Escala vertical</span><span class="un" id="vzLbl">automática</span></div>
@@ -386,19 +444,6 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
           <input type="range" id="bcR" min="30" max="1200" step="5">
           <p class="note">Vem na caixa ou no site do fabricante. Só muda a curva de perda de velocidade — um erro de 10% aqui quase não altera nada até 100 m.</p>
         </div>
-      </div>
-
-      <div class="grp">
-        <h2>Comprimento do cano</h2>
-        <div class="fld">
-          <div class="fhd">
-            <span class="nm">Cano da <b>sua</b> arma</span>
-            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="bblN" min="2" max="30"><span class="un">pol</span>
-          </div>
-          <input type="range" id="bblR" min="2" max="30" step="0.5">
-          <div class="chips nowrap" id="bblChips"></div>
-        </div>
-        <p class="note">Os presets vêm com um cano de referência. Mudando aqui, a velocidade é reestimada — cano mais longo queima mais pólvora e ganha velocidade, cano curto perde. <b>É estimativa:</b> se você tem cronógrafo, informe a velocidade medida direto no campo abaixo.</p>
       </div>
 
       <div class="grp">
@@ -458,6 +503,19 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
     <!-- ================= ALVOS ================= -->
     <section data-tab="alvos">
       <div class="grp">
+        <h2>Alcance da linha de tiro</h2>
+        <div class="fld">
+          <div class="fhd">
+            <span class="nm">Até onde a simulação vai</span>
+            <input type="text" inputmode="decimal" enterkeyhint="done" autocomplete="off" id="rN" min="10" max="600"><span class="un">m</span>
+          </div>
+          <input type="range" id="rR" min="10" max="600" step="5">
+          <div class="chips nowrap" id="rChips"></div>
+        </div>
+        <p class="note">É o alcance total simulado. O quanto disso aparece na tela de uma vez é o <b>zoom</b>, na aba Arma.</p>
+      </div>
+
+      <div class="grp">
         <h2>Zona de acerto</h2>
         <div class="fld">
           <div class="fhd">
@@ -482,17 +540,6 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
     <!-- ================= TABELA ================= -->
     <section data-tab="tab">
       <div class="grp">
-        <h2>Onde mirar</h2>
-        <div class="seg" id="aimMode">
-          <button data-m="none" class="on">Mirando no centro</button>
-          <button data-m="comp">Compensando</button>
-        </div>
-        <div class="chips nowrap" id="aimDist"></div>
-        <canvas id="aimCv"></canvas>
-        <div id="aimTxt" class="aimtxt"></div>
-      </div>
-
-      <div class="grp">
         <h2>Passo da tabela</h2>
         <div class="chips nowrap" id="stepChips"></div>
       </div>
@@ -511,6 +558,17 @@ tbody tr.rowsel td:first-child{box-shadow:inset 3px 0 0 var(--cy)}
     </section>
 
   </main>
+</div>
+
+<div id="sheet" hidden>
+  <div class="shbox" id="shBox">
+    <div class="grab"></div>
+    <div class="shttl" id="shTtl"></div>
+    <canvas id="shCv"></canvas>
+    <div id="shTxt" class="aimtxt"></div>
+    <div id="shExtra"></div>
+    <button class="btn gh" id="shClose" style="margin-top:12px">Fechar</button>
+  </div>
 </div>
 
 <div id="modal" hidden>
@@ -752,103 +810,145 @@ if (typeof window !== 'undefined') window.BAL = BAL;
 <script>
 /* =======================================================
    DESENHO DA ARMA — silhuetas laterais em MILÍMETROS REAIS
-   Origem local: boca do cano em (0,0), eixo do cano sobre y=0,
-   +x para frente, -y para cima. Todas as medidas em mm de verdade,
-   então a altura da mira fica automaticamente na proporção da arma.
+   Sistema local: eixo do cano sobre y=0, boca em x=0,
+   +x para frente, -y para cima. Tudo em mm de verdade.
+
+   A âncora do desenho é o CENTRO ÓPTICO DA MIRA: ele fica cravado
+   na linha de visada e a arma gira em volta dele conforme o ângulo
+   do cano muda. É assim que funciona de verdade — o ponto do dot é
+   a referência, quem inclina é a arma.
    ======================================================= */
 (function(){
 'use strict';
 
 const GUN_ART = {
-  pistola: {                                   // pistola tipo Glock 34
-    mm: 215, opticX: -140, railY: -16,
+
+  pistola: {                                  // pistola tipo Glock 34
+    mm: 215, opticX: -138, railY: -16, name:'Pistola',
     parts: [
-      {t:'pol', k:'b', p:[[0,-15],[-186,-15],[-186,12],[-192,34],[-214,130],[-168,144],
-                          [-140,44],[-132,26],[-20,22],[-20,10],[0,10]]},
-      {t:'arc', k:'l', p:[[-130,28],[-152,74],[-176,48]]},          // guarda-mato
-      {t:'pol', k:'d', p:[[-124,-13],[-56,-13],[-56,4],[-124,4]]},  // janela de ejeção
-      {t:'ln',  k:'l', p:[[-176,-14],[-176,8]]},
-      {t:'ln',  k:'l', p:[[-166,-14],[-166,8]]},
-      {t:'ln',  k:'l', p:[[-156,-14],[-156,8]]},                    // estrias
-      {t:'ln',  k:'l', p:[[-146,46],[-154,62]]}                     // gatilho
+      // contorno principal
+      {t:'pol', k:'b', p:[[2,-15],[-188,-15],[-188,13],[-194,36],[-216,132],[-170,146],
+                          [-142,46],[-134,27],[-22,23],[-22,11],[2,11]]},
+      {t:'pol', k:'d', p:[[-126,-13],[-58,-13],[-58,3],[-126,3]]},   // janela de ejeção
+      {t:'pol', k:'l', p:[[-8,-15],[-8,-21],[-20,-21],[-20,-15]]},   // massa de mira
+      {t:'pol', k:'l', p:[[-176,-15],[-176,-21],[-192,-21],[-192,-15]]}, // alça
+      {t:'arc', k:'l', p:[[-132,30],[-154,76],[-178,50]]},           // guarda-mato
+      {t:'ln',  k:'l', p:[[-148,48],[-156,64]]},                     // gatilho
+      {t:'ln',  k:'l', p:[[-178,-13],[-178,9]]},
+      {t:'ln',  k:'l', p:[[-168,-13],[-168,9]]},
+      {t:'ln',  k:'l', p:[[-158,-13],[-158,9]]},                     // estrias
+      {t:'ln',  k:'l', p:[[-176,60],[-206,120]]},
+      {t:'ln',  k:'l', p:[[-168,74],[-198,128]]}                     // textura do punho
     ]
   },
-  revolver: {                                  // revólver 4"
-    mm: 240, opticX: -150, railY: -18,
+
+  revolver: {                                 // revólver 4"
+    mm: 245, opticX: -150, railY: -20, name:'Revólver',
     parts: [
-      {t:'pol', k:'b', p:[[0,-17],[-118,-17],[-118,-32],[-196,-32],[-196,18],
-                          [-238,120],[-186,136],[-146,36],[-128,24],[-16,20],[-16,8],[0,8]]},
-      {t:'ell', k:'d', p:[[-152,0]], r:[32,29]},                    // tambor
-      {t:'ln',  k:'l', p:[[-152,-30],[-152,30]]},
-      {t:'pol', k:'l', p:[[-196,-32],[-226,-46],[-206,-22]]},       // cão
-      {t:'arc', k:'l', p:[[-126,26],[-150,72],[-178,44]]},          // guarda-mato
-      {t:'ln',  k:'l', p:[[-16,10],[-100,10]]}                      // vareta
+      {t:'pol', k:'b', p:[[2,-18],[-116,-18],[-116,-34],[-198,-34],[-198,20],
+                          [-240,120],[-188,138],[-148,38],[-130,25],[-14,21],[-14,9],[2,9]]},
+      {t:'ell', k:'d', p:[[-152,-2]], r:[33,30]},                    // tambor
+      {t:'ln',  k:'l', p:[[-152,-32],[-152,28]]},
+      {t:'ln',  k:'l', p:[[-176,-20],[-176,16]]},
+      {t:'pol', k:'l', p:[[-198,-34],[-230,-50],[-206,-24]]},        // cão
+      {t:'arc', k:'l', p:[[-128,28],[-152,74],[-180,46]]},           // guarda-mato
+      {t:'ln',  k:'l', p:[[-14,11],[-102,11]]},                      // vareta
+      {t:'pol', k:'l', p:[[-16,-18],[-16,-26],[-28,-26],[-28,-18]]}  // massa
     ]
   },
-  pcc: {                                       // carabina 9mm cano 16"
-    mm: 810, opticX: -430, railY: -40,
+
+  pcc: {                                      // carabina 9mm tipo MPX, cano 16"
+    mm: 830, opticX: -480, railY: -40,
+    name:'Carabina PCC',
     parts: [
-      {t:'pol', k:'b', p:[[0,-11],[-150,-11],[-150,-28],[-380,-28],[-380,-38],[-600,-38],
-                          [-600,-28],[-778,-20],[-778,58],[-600,66],[-600,20],[-380,20],
-                          [-380,30],[-150,30],[-150,11],[0,11]]},
-      {t:'pol', k:'b', p:[[-540,20],[-610,150],[-518,166],[-452,34]]},   // punho
-      {t:'pol', k:'d', p:[[-440,20],[-458,222],[-366,232],[-348,34]]},   // carregador reto 9mm
-      {t:'ln',  k:'l', p:[[-380,-38],[-600,-38]]},                       // trilho
-      {t:'ln',  k:'l', p:[[-320,-28],[-320,-11]]},
-      {t:'ln',  k:'l', p:[[-250,-28],[-250,-11]]}
+      {t:'pol', k:'b', p:[[-660,-28],[-812,-20],[-812,36],[-660,44]]},          // coronha dobrável
+      {t:'pol', k:'d', p:[[-756,-16],[-806,-14],[-806,30],[-756,32]]},
+      {t:'pol', k:'b', p:[[0,-12],[-46,-12],[-46,12],[0,12]]},                  // quebra-chamas
+      {t:'pol', k:'b', p:[[-46,-8],[-180,-8],[-180,8],[-46,8]]},                // cano
+      {t:'pol', k:'b', p:[[-160,-28],[-410,-28],[-410,24],[-160,24]]},          // guarda-mão
+      {t:'pol', k:'b', p:[[-410,-30],[-620,-30],[-620,18],[-410,18]]},          // caixa superior
+      {t:'pol', k:'d', p:[[-410,-40],[-620,-40],[-620,-30],[-410,-30]]},        // trilho
+      {t:'pol', k:'b', p:[[-500,16],[-690,16],[-690,52],[-500,52]]},            // caixa inferior
+      {t:'pol', k:'d', p:[[-588,50],[-512,50],[-486,240],[-562,236]]},          // carregador 9mm
+      {t:'pol', k:'b', p:[[-628,50],[-688,48],[-726,166],[-664,180]]},          // punho
+      {t:'arc', k:'l', p:[[-590,54],[-612,106],[-634,56]]},                     // guarda-mato
+      {t:'ell', k:'l', p:[[-612,70]], r:[12,16]},
+      {t:'ln',  k:'l', p:[[-210,-28],[-210,24]]},
+      {t:'ln',  k:'l', p:[[-270,-28],[-270,24]]},
+      {t:'ln',  k:'l', p:[[-330,-28],[-330,24]]},
+      {t:'ln',  k:'l', p:[[-440,-6],[-530,-6]]}
     ]
   },
-  fuzil: {                                     // fuzil 5.56 cano 16"
-    mm: 900, opticX: -470, railY: -40,
+
+  fuzil: {                                    // fuzil 5.56 tipo AR-15, cano 16"
+    mm: 900, opticX: -520, railY: -42, name:'Fuzil',
     parts: [
-      {t:'pol', k:'b', p:[[0,-11],[-210,-11],[-210,-28],[-420,-28],[-420,-38],[-650,-38],
-                          [-650,-28],[-866,-20],[-866,62],[-650,72],[-650,20],[-420,20],
-                          [-420,30],[-210,30],[-210,11],[0,11]]},
-      {t:'pol', k:'l', p:[[-108,-11],[-108,-52],[-146,-52],[-146,-11]]}, // massa de mira
-      {t:'pol', k:'b', p:[[-590,20],[-660,152],[-566,168],[-500,34]]},   // punho
-      {t:'pol', k:'d', p:[[-486,20],[-524,192],[-432,206],[-398,34]]},   // carregador curvo
-      {t:'ln',  k:'l', p:[[-420,-38],[-650,-38]]},                       // trilho
-      {t:'ln',  k:'l', p:[[-360,-28],[-360,-11]]},
-      {t:'ln',  k:'l', p:[[-290,-28],[-290,-11]]}
+      {t:'pol', k:'d', p:[[-700,-16],[-790,-16],[-790,16],[-700,16]]},          // tubo do amortecedor
+      {t:'pol', k:'b', p:[[-716,-30],[-884,-22],[-884,40],[-800,48],[-716,44]]},// coronha
+      {t:'pol', k:'d', p:[[-830,-20],[-878,-18],[-878,34],[-830,38]]},          // recorte da coronha
+      {t:'pol', k:'b', p:[[0,-13],[-58,-13],[-58,13],[0,13]]},                  // quebra-chamas
+      {t:'pol', k:'b', p:[[-58,-8],[-196,-8],[-196,8],[-58,8]]},                // cano
+      {t:'pol', k:'b', p:[[-140,-8],[-140,-48],[-176,-48],[-176,-8]]},          // base da massa de mira
+      {t:'pol', k:'b', p:[[-176,-30],[-436,-30],[-436,26],[-176,26]]},          // guarda-mão
+      {t:'pol', k:'b', p:[[-436,-32],[-648,-32],[-648,16],[-436,16]]},          // caixa superior
+      {t:'pol', k:'d', p:[[-436,-42],[-648,-42],[-648,-32],[-436,-32]]},        // trilho
+      {t:'pol', k:'d', p:[[-648,-30],[-706,-26],[-706,-12],[-648,-16]]},        // alavanca
+      {t:'pol', k:'b', p:[[-540,14],[-726,14],[-726,52],[-540,52]]},            // caixa inferior
+      {t:'pol', k:'d', p:[[-624,50],[-548,50],[-512,226],[-590,218]]},          // carregador
+      {t:'pol', k:'b', p:[[-664,50],[-724,48],[-762,168],[-700,182]]},          // punho
+      {t:'arc', k:'l', p:[[-626,54],[-648,106],[-670,56]]},                     // guarda-mato
+      {t:'ell', k:'l', p:[[-648,70]], r:[12,16]},                               // gatilho
+      {t:'ln',  k:'l', p:[[-230,-30],[-230,26]]},
+      {t:'ln',  k:'l', p:[[-290,-30],[-290,26]]},
+      {t:'ln',  k:'l', p:[[-350,-30],[-350,26]]},                               // rasgos do guarda-mão
+      {t:'ln',  k:'l', p:[[-460,-4],[-560,-4]]}                                 // janela de ejeção
     ]
   }
 };
 
-// Miras, também em mm. Centro óptico na origem local do conjunto.
+/* Miras — eixo óptico em y=0. `base` = distância do eixo óptico
+   até a superfície de encaixe (é ela que o mount preenche). */
 const SIGHT_ART = {
-  dot: {                                        // red dot ~70 mm
+  dot: {                                      // red dot de emissor aberto
+    mm: 72, base: 26, name:'Red dot',
     parts: [
-      {t:'pol', k:'b', p:[[-34,-26],[30,-26],[30,26],[-34,26]]},
-      {t:'pol', k:'c', p:[[22,-21],[30,-21],[30,21],[22,21]]},      // lente
-      {t:'ln',  k:'l', p:[[-34,-16],[16,-16]]}
+      {t:'pol', k:'b', p:[[-34,14],[10,14],[10,26],[-38,26]]},            // corpo
+      {t:'pol', k:'b', p:[[2,14],[16,-22],[30,-22],[30,26],[10,26]]},     // capuz
+      {t:'pol', k:'c', p:[[20,-20],[30,-20],[30,22],[20,22]]},            // lente
+      {t:'ln',  k:'l', p:[[-30,16],[4,16]]},
+      {t:'pol', k:'d', p:[[-30,4],[-14,4],[-14,14],[-30,14]]}            // ajuste
     ],
-    lens:[10,0], base:26
+    lens:[25,0]
   },
-  luneta: {                                     // luneta ~310 mm
+  luneta: {                                   // luneta com objetiva
+    mm: 330, base: 24, name:'Luneta',
     parts: [
-      {t:'pol', k:'b', p:[[-120,-22],[86,-22],[86,22],[-120,22]]},  // tubo
-      {t:'pol', k:'d', p:[[86,-34],[136,-34],[136,34],[86,34]]},    // objetiva
-      {t:'pol', k:'d', p:[[-166,-30],[-120,-30],[-120,30],[-166,30]]}, // ocular
-      {t:'pol', k:'d', p:[[-40,-46],[6,-46],[6,-22],[-40,-22]]},    // torre
-      {t:'pol', k:'d', p:[[-82,22],[-40,22],[-40,52],[-82,52]]},    // anéis
-      {t:'pol', k:'d', p:[[18,22],[60,22],[60,52],[18,52]]}
+      {t:'pol', k:'b', p:[[-108,-20],[70,-20],[70,20],[-108,20]]},        // tubo
+      {t:'pol', k:'d', p:[[70,-34],[126,-34],[126,34],[70,34]]},          // objetiva
+      {t:'pol', k:'c', p:[[118,-32],[126,-32],[126,32],[118,32]]},        // lente
+      {t:'pol', k:'d', p:[[-166,-30],[-108,-30],[-108,30],[-166,30]]},    // ocular
+      {t:'pol', k:'d', p:[[-30,-46],[10,-46],[10,-20],[-30,-20]]},        // torre
+      {t:'ln',  k:'l', p:[[-30,-38],[10,-38]]},
+      {t:'pol', k:'d', p:[[-74,20],[-42,20],[-42,24],[-74,24]]},          // anéis
+      {t:'pol', k:'d', p:[[18,20],[50,20],[50,24],[18,24]]}
     ],
-    lens:[118,0], base:22
+    lens:[122,0]
   },
-  ferro: {                                      // alça de mira ~28 mm
+  ferro: {                                    // alça e massa
+    mm: 30, base: 4, name:'Mira de ferro',
     parts: [
-      {t:'pol', k:'b', p:[[-14,0],[14,0],[14,22],[-14,22]]},
-      {t:'pol', k:'c', p:[[-5,0],[5,0],[5,12],[-5,12]]}
+      {t:'pol', k:'b', p:[[-15,-8],[15,-8],[15,4],[8,4],[8,-2],[-8,-2],[-8,4],[-15,4]]},
+      {t:'pol', k:'c', p:[[-5,-8],[5,-8],[5,-2],[-5,-2]]}
     ],
-    lens:null, base:0
+    lens:null
   }
 };
 
 const COL = {
-  b:{f:'#26313f', s:'rgba(158,178,208,.85)'},
-  d:{f:'#1b2431', s:'rgba(138,158,188,.7)'},
-  l:{s:'rgba(150,170,200,.75)'},
-  c:{s:'rgba(76,194,255,.9)'}
+  b:{f:'#2a3547', s:'rgba(172,192,220,.9)'},
+  d:{f:'#1b2431', s:'rgba(146,168,200,.75)'},
+  l:{s:'rgba(160,182,214,.8)'},
+  c:{f:'#12354d', s:'rgba(76,194,255,.95)'}
 };
 
 function run(ctx, parts, lw){
@@ -860,84 +960,103 @@ function run(ctx, parts, lw){
       pt.p.forEach(function(q,i){ i? ctx.lineTo(q[0],q[1]) : ctx.moveTo(q[0],q[1]); });
       ctx.closePath();
       if(c.f){ ctx.fillStyle=c.f; ctx.fill(); }
-      ctx.strokeStyle=c.s; ctx.stroke();
+      if(c.s){ ctx.strokeStyle=c.s; ctx.stroke(); }
     } else if(pt.t==='ell'){
       ctx.beginPath();
       ctx.ellipse(pt.p[0][0], pt.p[0][1], pt.r[0], pt.r[1], 0, 0, 6.2832);
       if(c.f){ ctx.fillStyle=c.f; ctx.fill(); }
-      ctx.strokeStyle=c.s; ctx.stroke();
+      if(c.s){ ctx.strokeStyle=c.s; ctx.stroke(); }
     } else if(pt.t==='arc'){
       ctx.beginPath();
       ctx.moveTo(pt.p[0][0],pt.p[0][1]);
       ctx.quadraticCurveTo(pt.p[1][0],pt.p[1][1],pt.p[2][0],pt.p[2][1]);
-      ctx.strokeStyle=c.s; ctx.stroke();
+      ctx.strokeStyle=c.s||COL.l.s; ctx.stroke();
     } else if(pt.t==='ln'){
       ctx.beginPath();
       ctx.moveTo(pt.p[0][0],pt.p[0][1]); ctx.lineTo(pt.p[1][0],pt.p[1][1]);
-      ctx.strokeStyle=c.s; ctx.stroke();
+      ctx.strokeStyle=c.s||COL.l.s; ctx.stroke();
     }
   });
 }
 
+/* Mount / riser entre o trilho e a base da mira */
+function drawMount(ctx, art, sArt, sightHmm, lw){
+  const topo = -sightHmm + sArt.base;      // superfície de encaixe da mira
+  const alt  = art.railY - topo;           // altura livre do riser (positivo = tem riser)
+  if(alt <= 2) return;
+  const x = art.opticX, w = 30;
+  ctx.lineWidth = lw;
+  ctx.fillStyle = '#222c3c'; ctx.strokeStyle = 'rgba(160,182,214,.8)';
+  // pé no trilho
+  ctx.beginPath(); ctx.rect(x-w-4, art.railY-6, (w+4)*2, 12); ctx.fill(); ctx.stroke();
+  // plataforma sob a mira
+  ctx.beginPath(); ctx.rect(x-w-2, topo-4, (w+2)*2, 10); ctx.fill(); ctx.stroke();
+  // coluna vazada
+  ctx.beginPath();
+  ctx.moveTo(x-w+2, art.railY-6); ctx.lineTo(x-w+10, topo+6);
+  ctx.lineTo(x+w-2, topo+6); ctx.lineTo(x+w-10, art.railY-6);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  if(alt > 34){                             // recorte de alívio
+    ctx.beginPath();
+    ctx.moveTo(x-w+12, art.railY-14); ctx.lineTo(x-w+18, topo+14);
+    ctx.lineTo(x+w-12, topo+14); ctx.lineTo(x+w-18, art.railY-14);
+    ctx.closePath();
+    ctx.fillStyle='#141c28'; ctx.fill(); ctx.stroke();
+  }
+}
+
 /**
- * Arma inclinada no ângulo do cano na tela, desenhada em escala própria.
- * A altura da mira entra em mm reais, então o mount cresce na proporção
- * certa em relação ao tamanho da arma.
- * Devolve a posição na tela do centro óptico da mira.
+ * Desenha o conjunto arma + mount + mira.
+ * ancX/ancY = onde cravar o CENTRO ÓPTICO da mira (fica na linha de visada);
+ * phi       = ângulo do cano na tela (rad, + = apontando para cima);
+ * maxLen    = comprimento máximo da arma em px.
+ * Devolve a caixa ocupada, para detectar toque.
  */
 function drawGun(ctx, o){
   const art  = GUN_ART[o.gun] || GUN_ART.pistola;
   const sArt = SIGHT_ART[o.sight] || SIGHT_ART.dot;
-  const s    = (o.maxLen || 76) / art.mm;              // px por mm
-  const cos  = Math.cos(o.phi), sin = Math.sin(o.phi);
-
-  // centro óptico: exatamente sightHmm acima do eixo do cano, em mm reais
-  const oy = -Math.max(o.sightHmm, 4);
-  const ox = art.opticX;
+  const s    = (o.maxLen || 78) / art.mm;
+  const lw   = Math.max(0.8, 1.15) / s;
 
   ctx.save();
-  ctx.translate(o.x0, o.yBore);
+  ctx.translate(o.ancX, o.ancY);
   ctx.rotate(-o.phi);
   ctx.scale(s, s);
-  ctx.lineJoin = 'round';
+  // origem local passa a ser o centro óptico: desloca para o sistema do cano
+  ctx.translate(-art.opticX, o.sightHmm);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
 
-  run(ctx, art.parts, 1.15 / s);
-
-  // haste do mount, do trilho até a base da mira
-  const topo = oy + sArt.base;
-  if(topo < art.railY - 1){
-    ctx.beginPath();
-    ctx.moveTo(ox - 16, art.railY);
-    ctx.lineTo(ox - 16, topo);
-    ctx.lineTo(ox + 16, topo);
-    ctx.lineTo(ox + 16, art.railY);
-    ctx.closePath();
-    ctx.fillStyle = '#1b2431';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(138,158,188,.7)';
-    ctx.lineWidth = 1.15 / s;
-    ctx.stroke();
-  }
+  run(ctx, art.parts, lw);
+  drawMount(ctx, art, sArt, o.sightHmm, lw);
 
   ctx.save();
-  ctx.translate(ox, oy);
-  run(ctx, sArt.parts, 1.15 / s);
+  ctx.translate(art.opticX, -o.sightHmm);
+  run(ctx, sArt.parts, lw);
   if(sArt.lens){
-    ctx.beginPath();
-    ctx.arc(sArt.lens[0], sArt.lens[1], 7, 0, 6.2832);
-    ctx.fillStyle = '#ff5252'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sArt.lens[0], sArt.lens[1], 6, 0, 6.2832);
+    ctx.fillStyle='#ff5252'; ctx.fill();
   }
   ctx.restore();
   ctx.restore();
 
-  return {
-    x: o.x0 + (ox * cos + oy * sin) * s,
-    y: o.yBore + (-ox * sin + oy * cos) * s,
-    scale: s
-  };
+  const R = art.mm * s;
+  return { x:o.ancX - R*0.75, y:o.ancY - R*0.28, w:R*1.1, h:R*0.62, scale:s, art:art, sArt:sArt };
 }
 
-window.GUNART = { drawGun: drawGun, GUN_ART: GUN_ART };
+/** Caixa envolvente do conjunto, em mm, no sistema do cano. */
+function bbox(gun, sight, sightHmm){
+  const art=GUN_ART[gun]||GUN_ART.pistola, sA=SIGHT_ART[sight]||SIGHT_ART.dot;
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  const put=(x,y)=>{ if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; };
+  art.parts.forEach(pt=>{
+    if(pt.t==='ell'){ put(pt.p[0][0]-pt.r[0],pt.p[0][1]-pt.r[1]); put(pt.p[0][0]+pt.r[0],pt.p[0][1]+pt.r[1]); }
+    else pt.p.forEach(q=>put(q[0],q[1]));
+  });
+  sA.parts.forEach(pt=>{ pt.p.forEach(q=>put(art.opticX+q[0], -sightHmm+q[1])); });
+  return { x0:x0, x1:x1, y0:y0, y1:y1, w:x1-x0, h:y1-y0, opticX:art.opticX, opticY:-sightHmm };
+}
+
+window.GUNART = { drawGun:drawGun, GUN_ART:GUN_ART, SIGHT_ART:SIGHT_ART, bbox:bbox };
 })();
 
 </script>
@@ -1018,7 +1137,7 @@ const DEFAULTS = {
   ammo:'p9-124', gr:124, bc:0.155, fps:1120, velMode:'fps', bbl:4, kbbl:150,
   tempC:25, altM:0, rh:60,
   tolCm:15, targets:[7,15,25,50], sel:0, step:10, vzoom:50, vauto:true,
-  aimMode:'none', tblSel:null
+  aimMode:'none', tblSel:null, view:'curva', vx0:0, vspan:100
 };
 let S = Object.assign({}, DEFAULTS, store.get('bal.state.v2', {}));
 S.targets = (S.targets||[]).slice(0,8);
@@ -1029,6 +1148,10 @@ const save = ()=> store.set('bal.state.v2', S);
 /* ---------- solução em cache ---------- */
 let SOL = null, ENV = null;
 function key(){ return [S.fps,S.gr,S.bc,S.shMm,S.zero,S.range,S.tempC,S.altM,S.rh,S.tolCm].join('|'); }
+function clampView(){
+  S.vspan = clamp(S.vspan||S.range, 2, S.range);
+  S.vx0   = clamp(S.vx0||0, 0, Math.max(0, S.range - S.vspan));
+}
 let lastKey = '';
 function recompute(force){
   const k = key();
@@ -1057,10 +1180,13 @@ function fitCanvas(){
 }
 
 function computeView(sol){
+  clampView();
   const xs = sol.traj.xs, ys = sol.traj.ys;
+  const x0v = S.vx0, x1v = S.vx0 + S.vspan;
   let lo = -S.shMm/1000, hi = 0;
   for(let i=0;i<sol.traj.n;i++){
-    if(xs[i] > S.range) break;
+    if(xs[i] > x1v) break;
+    if(xs[i] < x0v) continue;
     if(ys[i]<lo) lo=ys[i]; if(ys[i]>hi) hi=ys[i];
   }
   const tol = S.tolCm/100;
@@ -1077,10 +1203,10 @@ function computeView(sol){
   const plotW = W-PAD.l-PAD.r, plotH = H-PAD.t-PAD.b;
   return {
     yMin, yMax, plotW, plotH,
-    x2p:(x)=> PAD.l + (x/S.range)*plotW,
-    p2x:(p)=> ((p-PAD.l)/plotW)*S.range,
+    x2p:(x)=> PAD.l + ((x-S.vx0)/S.vspan)*plotW,
+    p2x:(p)=> S.vx0 + ((p-PAD.l)/plotW)*S.vspan,
     y2p:(y)=> PAD.t + ((yMax-y)/(yMax-yMin))*plotH,
-    exag:( (plotH/(yMax-yMin)) / (plotW/S.range) )
+    exag:( (plotH/(yMax-yMin)) / (plotW/S.vspan) )
   };
 }
 
@@ -1132,17 +1258,21 @@ function draw(){
   const sh=S.shMm/1000, tanA=Math.tan(sol.angle);
   const x0=x2p(0), yLos=y2p(0), yBore=y2p(-sh);
   // angulo do cano COMO APARECE NA TELA (a escala vertical e exagerada)
-  const boreEndY = y2p(-sh + tanA*S.range);
-  const phi = Math.atan2(yBore - boreEndY, V.plotW);
+  const boreEndY = y2p(-sh + tanA*(S.vx0+S.vspan));
+  const phi = Math.atan2(y2p(-sh + tanA*S.vx0) - boreEndY, V.plotW);
 
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#080b12'; ctx.fillRect(0,0,W,H);
 
-  /* --- arma (desenhada antes: fica toda a esquerda de x=0) --- */
+  /* --- arma: ancorada pelo CENTRO ÓPTICO na linha de visada --- */
+  const gArt = GUNART.GUN_ART[S.gun] || GUNART.GUN_ART.pistola;
+  const gScale = (PAD.l-4)/gArt.mm;
   const gunPx = GUNART.drawGun(ctx, {
-    x0:x0, yBore:yBore, phi:phi, sightHmm:S.shMm,
-    gun:S.gun, sight:S.sight, maxLen:PAD.l-5
+    ancX: PAD.l - Math.abs(gArt.opticX)*gScale*Math.cos(phi),
+    ancY: yLos, phi:phi, sightHmm:S.shMm,
+    gun:S.gun, sight:S.sight, maxLen:PAD.l-4
   });
+  GUNBOX = gunPx;
 
   /* --- faixa de tolerância --- */
   const ytA=y2p(tol), ytB=y2p(-tol);
@@ -1153,14 +1283,16 @@ function draw(){
   ctx.setLineDash([]);
 
   /* --- grade --- */
-  const stepX = niceStep(S.range, 6);
+  const stepX = niceStep(S.vspan, 6);
   ctx.lineWidth=1; ctx.font='500 9.5px -apple-system,system-ui,sans-serif'; ctx.textBaseline='alphabetic';
-  for(let x=stepX; x<=S.range+1e-6; x+=stepX){
+  const xIni = Math.ceil(S.vx0/stepX)*stepX;
+  for(let x=xIni; x<=S.vx0+S.vspan+1e-6; x+=stepX){
     const px=x2p(x);
+    if(px<L-1||px>R+1) continue;
     ctx.strokeStyle='rgba(255,255,255,.045)';
     ctx.beginPath(); ctx.moveTo(px,T); ctx.lineTo(px,B); ctx.stroke();
     ctx.fillStyle='#5c6880'; ctx.textAlign='center';
-    const xl = nf(x,0)+(x>=S.range-1e-6?' m':'');
+    const xl = nf(x, x<10&&stepX<5?1:0)+(x>=S.vx0+S.vspan-1e-6?' m':'');
     ctx.fillText(xl, clamp(px, 12, R+PAD.r-ctx.measureText(xl).width/2-2), H-8);
   }
   const spanCm=(V.yMax-V.yMin)*100, stepY=niceStep(spanCm,4)/100;
@@ -1178,7 +1310,7 @@ function draw(){
   /* --- eixo do cano (prolongamento) --- */
   ctx.save(); ctx.beginPath(); ctx.rect(L,T,R-L,B-T); ctx.clip();
   ctx.setLineDash([1.5,3.5]); ctx.strokeStyle='rgba(255,200,97,.62)'; ctx.lineWidth=1.3;
-  ctx.beginPath(); ctx.moveTo(x2p(0), y2p(-sh)); ctx.lineTo(x2p(S.range), y2p(-sh + tanA*S.range)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2p(S.vx0), y2p(-sh + tanA*S.vx0)); ctx.lineTo(x2p(S.vx0+S.vspan), y2p(-sh + tanA*(S.vx0+S.vspan))); ctx.stroke();
   ctx.restore();
 
   /* --- linha de visada --- */
@@ -1188,7 +1320,7 @@ function draw(){
 
   /* --- faixa útil --- */
   if(sol.useful){
-    const a=x2p(clamp(sol.useful.near,0,S.range)), b=x2p(clamp(sol.useful.far,0,S.range));
+    const a=x2p(clamp(sol.useful.near,S.vx0,S.vx0+S.vspan)), b=x2p(clamp(sol.useful.far,S.vx0,S.vx0+S.vspan));
     if(b-a>2){
       ctx.strokeStyle='#3ddc97'; ctx.lineWidth=3; ctx.lineCap='round';
       ctx.beginPath(); ctx.moveTo(a,B-2); ctx.lineTo(b,B-2); ctx.stroke();
@@ -1202,7 +1334,8 @@ function draw(){
   const xs=sol.traj.xs, ys=sol.traj.ys;
   let started=false;
   for(let i=0;i<sol.traj.n;i++){
-    if(xs[i]>S.range) break;
+    if(xs[i]>S.vx0+S.vspan+1) break;
+    if(xs[i]<S.vx0-1) continue;
     const px=x2p(xs[i]), py=y2p(ys[i]);
     if(!started){ ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
   }
@@ -1216,7 +1349,7 @@ function draw(){
   const zoneVisible = Math.abs(y2p(-tol)-y2p(tol)) < (B-T)*0.82;
   let lastLblRight = -1e9;
   const rows = {}; let maxRow = 0; {
-    const ord = S.targets.map((d,i)=>({d:d,i:i})).filter(o=>o.d<=S.range).sort((a,b)=>a.d-b.d);
+    const ord = S.targets.map((d,i)=>({d:d,i:i})).filter(o=>o.d>=S.vx0&&o.d<=S.vx0+S.vspan).sort((a,b)=>a.d-b.d);
     const lastPx = [-1e9,-1e9,-1e9];
     ord.forEach(o=>{ const px=x2p(o.d);
       let r = lastPx.findIndex(v => px - v >= 19);
@@ -1225,7 +1358,7 @@ function draw(){
   }
   const lblY = hy0 + maxRow*19 + 24;
   S.targets.forEach((d,i)=>{
-    if(d>S.range) return;
+    if(d<S.vx0 || d>S.vx0+S.vspan) return;
     const hy = hy0 + (rows[i]||0)*19;
     const px=x2p(d), s=sol.at(d), sel=(i===S.sel);
     const ok=isFinite(s.y);
@@ -1271,7 +1404,7 @@ function draw(){
   if(sol.zero1!=null) zeros.push([sol.zero1, sol.tangent?'zero':'1º zero']);
   if(sol.zero2!=null && !sol.tangent) zeros.push([sol.zero2,'2º zero']);
   zeros.forEach(([zx,lbl])=>{
-    if(zx>S.range || zx<0) return;
+    if(zx>S.vx0+S.vspan || zx<S.vx0) return;
     const px=x2p(zx), py=y2p(0);
     ctx.setLineDash([2,3]); ctx.strokeStyle='rgba(255,200,97,.45)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,B-8); ctx.stroke(); ctx.setLineDash([]);
@@ -1279,12 +1412,12 @@ function draw(){
     ctx.beginPath(); ctx.arc(px,py,4.2,0,7); ctx.fill(); ctx.stroke();
     label(px, B-10, lbl+' '+nf(zx,zx<10?1:0)+' m', '#ffc861','center', 1, [0,-16,-32,-48]);
   });
-  if(sol.zero2!=null && sol.zero2>S.range && !sol.tangent){
+  if(sol.zero2!=null && sol.zero2>S.vx0+S.vspan && !sol.tangent){
     label(R, T+13, '2º zero '+nf(sol.zero2,0)+' m →', '#ffc861','right', 1, DOWN);
   }
 
   /* --- ápice --- */
-  if(sol.apex.y>0.004 && sol.apex.y>(V.yMax-V.yMin)*0.03 && sol.apex.x<=S.range && sol.apex.x>0.5){
+  if(sol.apex.y>0.004 && sol.apex.y>(V.yMax-V.yMin)*0.03 && sol.apex.x<=S.vx0+S.vspan && sol.apex.x>=S.vx0){
     const px=x2p(sol.apex.x), py=y2p(sol.apex.y);
     ctx.fillStyle='#b48cff';
     ctx.beginPath(); ctx.moveTo(px,py-4.5); ctx.lineTo(px+4.5,py); ctx.lineTo(px,py+4.5); ctx.lineTo(px-4.5,py); ctx.closePath(); ctx.fill();
@@ -1292,11 +1425,8 @@ function draw(){
   }
 
   /* --- cota da altura da mira --- */
-  if(Math.abs(yBore-yLos)>24){
-    ctx.setLineDash([2,3]); ctx.strokeStyle='rgba(150,170,200,.35)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(gunPx.x, gunPx.y); ctx.lineTo(gunPx.x, yLos); ctx.stroke();
-    ctx.setLineDash([]);
-    const cx=x0+7;
+  if(Math.abs(yBore-yLos)>24 && S.vx0<S.vspan*0.15){
+    const cx=x2p(S.vx0)+7;
     ctx.strokeStyle='rgba(150,170,200,.55)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(cx,yLos+2); ctx.lineTo(cx,yBore-2); ctx.stroke();
     ctx.beginPath();
@@ -1310,34 +1440,86 @@ function draw(){
 
   /* --- rótulo de escala --- */
   ctx.fillStyle='#3d4759'; ctx.font='500 9px -apple-system,system-ui,sans-serif'; ctx.textAlign='left';
-  ctx.fillText('vertical ×'+nf(V.exag,0)+'  ·  arma em escala real', 3, 10);
+  ctx.fillText('vertical ×'+nf(V.exag,0)+'  ·  '+nf(S.vx0,0)+'–'+nf(S.vx0+S.vspan,0)+' m', 3, 10);
+  cv.setAttribute('data-win', nf(S.vx0,1)+'..'+nf(S.vx0+S.vspan,1));
 }
 
-/* ---------- arrastar alvos ---------- */
-let drag=-1;
+/* ---------- interação no gráfico ---------- */
+let GUNBOX=null;
+let ptrs=new Map(), imode=null, dragI=-1, panPx=0, panV0=0, pinch0=null, moveAmt=0, downPt=null;
+
 function pickTarget(px){
   if(!VIEW) return -1;
-  let best=-1, bd=26;
-  S.targets.forEach((d,i)=>{ if(d>S.range) return; const dd=Math.abs(VIEW.x2p(d)-px); if(dd<bd){bd=dd;best=i;} });
+  let best=-1, bd=24;
+  S.targets.forEach((d,i)=>{
+    if(d<S.vx0||d>S.vx0+S.vspan) return;
+    const dd=Math.abs(VIEW.x2p(d)-px); if(dd<bd){bd=dd;best=i;}
+  });
   return best;
 }
+function hitGun(px){ return px < PAD.l - 2; }
+function relPos(e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+
 cv.addEventListener('pointerdown', e=>{
-  const r=cv.getBoundingClientRect(), px=e.clientX-r.left;
-  const i=pickTarget(px);
-  if(i>=0){ drag=i; S.sel=i; cv.setPointerCapture(e.pointerId); hideHint(); draw(); renderTargets(); }
+  const p=relPos(e);
+  ptrs.set(e.pointerId, p);
+  if(ptrs.size===1){
+    downPt=p; moveAmt=0;
+    const i=pickTarget(p.x);
+    if(i>=0){ imode='tgt'; dragI=i; S.sel=i; draw(); renderTargets(); }
+    else { imode = hitGun(p.x) ? 'gun' : 'pan'; panPx=p.x; panV0=S.vx0; }
+    try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+    hideHint();
+  } else if(ptrs.size===2){
+    const a=Array.from(ptrs.values());
+    imode='pinch';
+    pinch0={ d:Math.max(12,Math.abs(a[0].x-a[1].x)), vspan:S.vspan,
+             wx: VIEW.p2x((a[0].x+a[1].x)/2), cx:(a[0].x+a[1].x)/2 };
+  }
 });
 cv.addEventListener('pointermove', e=>{
-  if(drag<0) return;
+  if(!ptrs.has(e.pointerId)) return;
+  const p=relPos(e);
+  ptrs.set(e.pointerId, p);
+  if(downPt) moveAmt=Math.max(moveAmt, Math.abs(p.x-downPt.x)+Math.abs(p.y-downPt.y));
   e.preventDefault();
-  const r=cv.getBoundingClientRect();
-  const snap = S.range<=120?0.5:1;
-  let d = VIEW.p2x(e.clientX-r.left);
-  d = clamp(Math.round(d/snap)*snap, 1, S.range);
-  if(d!==S.targets[drag]){ S.targets[drag]=d; draw(); renderStats(); renderTargets(); }
+
+  if(imode==='pinch' && ptrs.size>=2){
+    const a=Array.from(ptrs.values());
+    const d=Math.max(12,Math.abs(a[0].x-a[1].x));
+    S.vspan = clamp(pinch0.vspan * pinch0.d / d, 2, S.range);
+    S.vx0   = clamp(pinch0.wx - ((pinch0.cx-PAD.l)/VIEW.plotW)*S.vspan, 0, Math.max(0,S.range-S.vspan));
+    refresh(false); syncHz();
+    return;
+  }
+  if(imode==='tgt' && dragI>=0){
+    const snap = S.vspan<=60?0.5:1;
+    let d = VIEW.p2x(p.x);
+    d = clamp(Math.round(d/snap)*snap, 1, S.range);
+    if(d!==S.targets[dragI]){ S.targets[dragI]=d; draw(); renderStats(); renderTargets(); }
+    return;
+  }
+  if(imode==='gun' && moveAmt>8) imode='pan';
+  if(imode==='pan'){
+    const dx = p.x - panPx;
+    S.vx0 = clamp(panV0 - (dx/VIEW.plotW)*S.vspan, 0, Math.max(0,S.range-S.vspan));
+    draw(); renderStats();
+  }
 });
-function endDrag(){ if(drag>=0){ drag=-1; save(); renderTable(); } }
-cv.addEventListener('pointerup', endDrag);
-cv.addEventListener('pointercancel', endDrag);
+function endPtr(e){
+  const wasMode=imode, wasI=dragI;
+  ptrs.delete(e.pointerId);
+  if(ptrs.size===0){
+    if(moveAmt<8){
+      if(wasMode==='tgt' && wasI>=0) abrirAlvo(S.targets[wasI]);
+      else if(wasMode==='gun') abrirArma();
+    }
+    imode=null; dragI=-1; downPt=null;
+    save(); renderTable();
+  } else if(ptrs.size===1){ imode=null; }
+}
+cv.addEventListener('pointerup', endPtr);
+cv.addEventListener('pointercancel', endPtr);
 
 let hintDone=false;
 function hideHint(){ if(hintDone) return; hintDone=true; const h=$('#vizhint'); if(!h) return; h.style.opacity=0; setTimeout(()=>{ if(h.parentNode) h.remove(); },600); }
@@ -1447,117 +1629,101 @@ function sortTargets(){
   const i = S.targets.indexOf(cur);
   S.sel = i>=0 ? i : clamp(S.sel,0,S.targets.length-1);
 }
-/* ---------- visor de alvo (frente) ---------- */
-const acv=$('#aimCv'), actx=acv?acv.getContext('2d'):null;
+/* ---------- vista de alvo (de frente) ---------- */
 function aimDist(){
   if(S.tblSel!=null) return S.tblSel;
   return S.targets[clamp(S.sel,0,S.targets.length-1)] || 25;
 }
-function renderAim(){
-  if(!actx) return;
-  const r=acv.getBoundingClientRect();
-  if(r.width<10) return;
+/** Desenha o alvo de frente num canvas. Devolve o texto explicativo. */
+function drawAlvo(el, g, d, comp){
+  const r=el.getBoundingClientRect();
+  if(r.width<10) return '';
   const dpr=Math.min(window.devicePixelRatio||1,3);
-  acv.width=Math.round(r.width*dpr); acv.height=Math.round(r.height*dpr);
-  actx.setTransform(dpr,0,0,dpr,0,0);
+  el.width=Math.round(r.width*dpr); el.height=Math.round(r.height*dpr);
+  g.setTransform(dpr,0,0,dpr,0,0);
   const W=r.width, H=r.height;
 
-  const sol=recompute(), d=aimDist(), sm=sol.at(d);
-  const ok=isFinite(sm.y);
-  const off=ok? sm.y*100 : 0;              // cm: + acima do ponto de mira
-  const comp = S.aimMode==='comp';
-  // modo "mirando no centro": mira em 0, impacto em off
-  // modo "compensando":       impacto em 0, mira em -off
-  const yMira   = comp ? -off : 0;
-  const yTiro   = comp ? 0    : off;
+  const sol=recompute(), sm=sol.at(d), ok=isFinite(sm.y);
+  const off=ok? sm.y*100 : 0;
+  const yMira = comp ? -off : 0;
+  const yTiro = comp ? 0    : off;
 
-  // escala vertical em cm
-  const need=Math.max(44, Math.abs(off)*2.3+16);
-  const cm2px=(H-26)/need;
-  const cy=H/2, cx=W/2;
+  const need=Math.max(82, Math.abs(off)*2.3+18);   // 82 cm garante o alvo inteiro na tela
+  const cm2px=(H-24)/need, cy=H/2, cx=W/2;
   const Y=v=> cy - v*cm2px;
 
-  actx.clearRect(0,0,W,H);
-  actx.fillStyle='#0a0e17'; actx.fillRect(0,0,W,H);
+  g.clearRect(0,0,W,H);
+  g.fillStyle='#0a0e17'; g.fillRect(0,0,W,H);
 
-  // alvo: 45 x 75 cm, zona central 15 x 30 cm
   const tw=45*cm2px, th=75*cm2px;
-  actx.fillStyle='#1d2534'; actx.strokeStyle='rgba(158,178,208,.5)'; actx.lineWidth=1.3;
-  actx.beginPath(); actx.roundRect(cx-tw/2, cy-th/2, tw, th, Math.min(9,tw*0.1)); actx.fill(); actx.stroke();
+  g.fillStyle='#1d2534'; g.strokeStyle='rgba(158,178,208,.5)'; g.lineWidth=1.3;
+  g.beginPath(); g.roundRect(cx-tw/2, cy-th/2, tw, th, Math.min(10,tw*0.1)); g.fill(); g.stroke();
   const aw=15*cm2px, ah=30*cm2px;
-  actx.fillStyle='#27344a'; actx.strokeStyle='rgba(158,178,208,.42)'; actx.lineWidth=1;
-  actx.beginPath(); actx.roundRect(cx-aw/2, cy-ah/2, aw, ah, 4); actx.fill(); actx.stroke();
-  actx.fillStyle='rgba(158,178,208,.5)';
-  actx.font='600 9px -apple-system,system-ui,sans-serif'; actx.textAlign='center';
-  actx.fillText('A', cx, cy-ah/2+11);
+  g.fillStyle='#27344a'; g.strokeStyle='rgba(158,178,208,.42)'; g.lineWidth=1;
+  g.beginPath(); g.roundRect(cx-aw/2, cy-ah/2, aw, ah, 4); g.fill(); g.stroke();
+  g.fillStyle='rgba(158,178,208,.5)';
+  g.font='600 9px -apple-system,system-ui,sans-serif'; g.textAlign='center';
+  g.fillText('A', cx, cy-ah/2+11);
 
-  // régua em cm
-  actx.strokeStyle='rgba(255,255,255,.06)'; actx.lineWidth=1;
+  g.strokeStyle='rgba(255,255,255,.06)'; g.lineWidth=1;
   const st = need>90?20: need>45?10:5;
-  actx.font='500 8.5px -apple-system,system-ui,sans-serif';
+  g.font='500 8.5px -apple-system,system-ui,sans-serif';
   for(let v=-Math.floor(need/2/st)*st; v<=need/2; v+=st){
     const py=Y(v); if(py<8||py>H-6) continue;
-    actx.beginPath(); actx.moveTo(10,py); actx.lineTo(W-10,py); actx.stroke();
-    if(v!==0){ actx.fillStyle='#3d4759'; actx.textAlign='left'; actx.fillText(sg(v,0), 12, py-2); }
+    g.beginPath(); g.moveTo(10,py); g.lineTo(W-10,py); g.stroke();
+    if(v!==0){ g.fillStyle='#3d4759'; g.textAlign='left'; g.fillText(sg(v,0), 12, py-2); }
   }
 
-  // ligação mira -> impacto
   if(ok && Math.abs(off)*cm2px>3){
-    actx.setLineDash([3,3]); actx.strokeStyle='rgba(255,200,97,.75)'; actx.lineWidth=1.4;
-    actx.beginPath(); actx.moveTo(cx+30, Y(yMira)); actx.lineTo(cx+30, Y(yTiro)); actx.stroke();
-    actx.setLineDash([]);
-    const a=Y(yMira), b=Y(yTiro), dir=b>a?1:-1;
-    actx.beginPath();
-    actx.moveTo(cx+26, b-5*dir); actx.lineTo(cx+30, b); actx.lineTo(cx+34, b-5*dir);
-    actx.strokeStyle='rgba(255,200,97,.9)'; actx.stroke();
-    actx.fillStyle='#ffc861'; actx.font='700 10.5px -apple-system,system-ui,sans-serif'; actx.textAlign='left';
-    actx.fillText(nf(Math.abs(off),1)+' cm', cx+38, (a+b)/2+4);
+    const a=Y(yMira), b=Y(yTiro), dir=b>a?1:-1, lx=cx+Math.min(34, tw/2+12);
+    g.setLineDash([3,3]); g.strokeStyle='rgba(255,200,97,.75)'; g.lineWidth=1.4;
+    g.beginPath(); g.moveTo(lx,a); g.lineTo(lx,b); g.stroke(); g.setLineDash([]);
+    g.beginPath(); g.moveTo(lx-4,b-5*dir); g.lineTo(lx,b); g.lineTo(lx+4,b-5*dir);
+    g.strokeStyle='rgba(255,200,97,.95)'; g.stroke();
+    g.fillStyle='#ffc861'; g.font='700 11px -apple-system,system-ui,sans-serif'; g.textAlign='left';
+    g.fillText(nf(Math.abs(off),1)+' cm', lx+7, (a+b)/2+4);
   }
 
-  // ponto de mira (dot)
   const my=Y(yMira);
-  actx.strokeStyle='#4cc2ff'; actx.lineWidth=1.6;
-  actx.beginPath(); actx.arc(cx,my,9,0,7); actx.stroke();
-  actx.beginPath();
-  actx.moveTo(cx-15,my); actx.lineTo(cx-4,my); actx.moveTo(cx+4,my); actx.lineTo(cx+15,my);
-  actx.moveTo(cx,my-15); actx.lineTo(cx,my-4); actx.moveTo(cx,my+4); actx.lineTo(cx,my+15);
-  actx.stroke();
-  actx.fillStyle='#4cc2ff'; actx.beginPath(); actx.arc(cx,my,2.4,0,7); actx.fill();
+  g.strokeStyle='#4cc2ff'; g.lineWidth=1.7;
+  g.beginPath(); g.arc(cx,my,10,0,7); g.stroke();
+  g.beginPath();
+  g.moveTo(cx-17,my); g.lineTo(cx-5,my); g.moveTo(cx+5,my); g.lineTo(cx+17,my);
+  g.moveTo(cx,my-17); g.lineTo(cx,my-5); g.moveTo(cx,my+5); g.lineTo(cx,my+17);
+  g.stroke();
+  g.fillStyle='#4cc2ff'; g.beginPath(); g.arc(cx,my,2.5,0,7); g.fill();
 
-  // ponto de impacto
   if(ok){
     const ty=Y(yTiro);
-    actx.fillStyle='#ff5252'; actx.strokeStyle='#0a0e17'; actx.lineWidth=2;
-    actx.shadowColor='rgba(255,82,82,.6)'; actx.shadowBlur=9;
-    actx.beginPath(); actx.arc(cx,ty,6.5,0,7); actx.fill(); actx.shadowBlur=0; actx.stroke();
+    g.fillStyle='#ff5252'; g.strokeStyle='#0a0e17'; g.lineWidth=2;
+    g.shadowColor='rgba(255,82,82,.6)'; g.shadowBlur=9;
+    g.beginPath(); g.arc(cx,ty,7,0,7); g.fill(); g.shadowBlur=0; g.stroke();
   }
 
-  // legenda
-  actx.font='600 9.5px -apple-system,system-ui,sans-serif'; actx.textAlign='left';
-  actx.fillStyle='#4cc2ff'; actx.fillText('onde você mira', 10, H-8);
-  actx.fillStyle='#ff5252'; actx.textAlign='right'; actx.fillText('onde a bala bate', W-10, H-8);
+  g.font='600 9.5px -apple-system,system-ui,sans-serif'; g.textAlign='left';
+  g.fillStyle='#4cc2ff'; g.fillText('onde você mira', 10, H-8);
+  g.fillStyle='#ff5252'; g.textAlign='right'; g.fillText('onde a bala bate', W-10, H-8);
 
-  // texto explicativo
-  const t=$('#aimTxt');
-  if(!ok){ t.innerHTML='A bala não chega a <b>'+nf(d,1)+' m</b> com essa configuração.'; }
-  else if(Math.abs(off)<0.5){
-    t.innerHTML='A <b>'+nf(d,1)+' m</b> a bala passa praticamente <span class="ok">em cima do ponto de mira</span>. Mire no centro e pronto.';
-  } else if(comp){
-    t.innerHTML='Para acertar o centro a <b>'+nf(d,1)+' m</b>, mire <b class="'+(off<0?'up':'dn')+'">'
+  if(!ok) return 'A bala não chega a <b>'+nf(d,1)+' m</b> com essa configuração.';
+  if(Math.abs(off)<0.5)
+    return 'A <b>'+nf(d,1)+' m</b> a bala passa praticamente <span class="ok">em cima do ponto de mira</span>. Mire no centro e pronto.';
+  if(comp)
+    return 'Para acertar o centro a <b>'+nf(d,1)+' m</b>, mire <b class="'+(off<0?'up':'dn')+'">'
       + nf(Math.abs(off),1)+' cm '+(off<0?'acima':'abaixo')+'</b> do centro.'
-      + (Math.abs(off)>=8 ? ' Como referência, isso é '+nf(Math.abs(off)/30*100,0)
-         +'% da altura da zona A — o dot fica '+(off<0?'acima':'abaixo')+' do ponto que você quer acertar.' : '');
-  } else {
-    t.innerHTML='Mirando no centro a <b>'+nf(d,1)+' m</b>, o tiro bate <b class="'+(off<0?'dn':'up')+'">'
-      + nf(Math.abs(off),1)+' cm '+(off<0?'abaixo':'acima')+'</b> do ponto de mira.';
-  }
+      + (Math.abs(off)>=8 ? ' Isso é '+nf(Math.abs(off)/30*100,0)+'% da altura da zona A.' : '');
+  return 'Mirando no centro a <b>'+nf(d,1)+' m</b>, o tiro bate <b class="'+(off<0?'dn':'up')+'">'
+    + nf(Math.abs(off),1)+' cm '+(off<0?'abaixo':'acima')+'</b> do ponto de mira.';
+}
 
-  // chips de distância
-  const dl=$('#aimDist');
+const acv=$('#aimCv'), actx=acv?acv.getContext('2d'):null;
+function renderAim(){
+  if(!actx || S.view!=='alvo') return;
+  const d=aimDist();
+  $('#aimTxt').innerHTML = drawAlvo(acv, actx, d, S.aimMode==='comp');
   const lista=S.targets.slice();
   if(S.tblSel!=null && !lista.some(x=>Math.abs(x-S.tblSel)<0.05)) lista.push(S.tblSel);
   lista.sort((a,b)=>a-b);
-  dl.innerHTML=lista.map(x=>'<button class="chip sm'+(Math.abs(x-d)<0.05?' on':'')+'" data-v="'+x+'">'+nf(x,x%1?1:0)+' m</button>').join('');
+  $('#aimDist').innerHTML=lista.map(x=>'<button class="chip sm'+(Math.abs(x-d)<0.05?' on':'')+'" data-v="'+x+'">'+nf(x,x%1?1:0)+' m</button>').join('');
 }
 $('#aimMode').addEventListener('click', e=>{
   const b=e.target.closest('button'); if(!b) return;
@@ -1570,11 +1736,91 @@ $('#aimDist').addEventListener('click', e=>{
   S.tblSel=parseFloat(b.dataset.v); renderAim(); renderTable(); save();
 });
 
+/* ---------- folha modal (sheet) ---------- */
+const shcv=$('#shCv'), shctx=shcv?shcv.getContext('2d'):null;
+let shKind=null, shDist=null;
+function fecharSheet(){ $('#sheet').hidden=true; shKind=null; }
+$('#shClose').addEventListener('click', fecharSheet);
+$('#sheet').addEventListener('click', e=>{ if(e.target.id==='sheet') fecharSheet(); });
+
+function abrirAlvo(d){
+  shKind='alvo'; shDist=d;
+  $('#sheet').hidden=false;
+  $('#shTtl').textContent='Alvo a '+nf(d, d%1?1:0)+' m';
+  const sol=recompute(), sm=sol.at(d), ok=isFinite(sm.y);
+  $('#shExtra').innerHTML = ok ? '<div class="readout" style="border:0;padding-top:12px">'
+    + '<div class="ro"><div class="k">Impacto</div><div class="v">'+sg(sm.y*100,1)+' cm</div></div>'
+    + '<div class="ro"><div class="k">Velocidade</div><div class="v">'+nf(sm.v*MS_FPS,0)+' fps</div></div>'
+    + '<div class="ro"><div class="k">Energia</div><div class="v">'+nf(sm.energyJ,0)+' J</div></div>'
+    + '<div class="ro"><div class="k">Tempo</div><div class="v">'+nf(sm.t,3)+' s</div></div></div>'
+    + '<div class="seg tiny" id="shMode" style="margin-top:12px">'
+    + '<button data-m="none" class="'+(S.aimMode==='none'?'on':'')+'">Mirando no centro</button>'
+    + '<button data-m="comp" class="'+(S.aimMode==='comp'?'on':'')+'">Compensando</button></div>' : '';
+  const mm=$('#shMode');
+  if(mm) mm.addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    S.aimMode=b.dataset.m;
+    $$('#shMode button').forEach(x=>x.classList.toggle('on', x.dataset.m===S.aimMode));
+    $('#shTxt').innerHTML = drawAlvo(shcv, shctx, shDist, S.aimMode==='comp');
+    save(); renderAim();
+  });
+  requestAnimationFrame(()=>{ $('#shTxt').innerHTML = drawAlvo(shcv, shctx, d, S.aimMode==='comp'); });
+}
+
+function abrirArma(){
+  shKind='arma';
+  const sol=recompute();
+  $('#sheet').hidden=false;
+  const gA=GUNART.GUN_ART[S.gun], sA=GUNART.SIGHT_ART[S.sight];
+  $('#shTtl').textContent = gA.name+' · '+sA.name;
+  $('#shExtra').innerHTML='<div class="readout" style="border:0;padding-top:12px">'
+    + '<div class="ro"><div class="k">Altura da mira</div><div class="v">'+nf(S.shMm,0)+' mm</div></div>'
+    + '<div class="ro"><div class="k">Cano</div><div class="v">'+nf(S.bbl,S.bbl%1?1:0)+'"</div></div>'
+    + '<div class="ro"><div class="k">Ângulo do cano</div><div class="v">'+nf(sol.angle*1000,2)+' mrad</div></div>'
+    + '<div class="ro"><div class="k">Zerada em</div><div class="v">'+nf(S.zero,S.zero%1?1:0)+' m</div></div></div>';
+  $('#shTxt').innerHTML='Aqui a arma está <b>em escala real</b> e o ângulo do cano é o de verdade: '
+    + nf(sol.angle*1000,2)+' mrad, ou seja '+nf(sol.angle*180/Math.PI,3)+' grau. '
+    + 'No gráfico ele parece muito maior porque a escala vertical é esticada para a curva ficar visível.';
+  requestAnimationFrame(()=>{
+    const r=shcv.getBoundingClientRect(); if(r.width<10) return;
+    const dpr=Math.min(window.devicePixelRatio||1,3);
+    shcv.width=Math.round(r.width*dpr); shcv.height=Math.round(r.height*dpr);
+    shctx.setTransform(dpr,0,0,dpr,0,0);
+    const W=r.width, H=r.height;
+    shctx.clearRect(0,0,W,H); shctx.fillStyle='#0a0e17'; shctx.fillRect(0,0,W,H);
+    const bb=GUNART.bbox(S.gun, S.sight, S.shMm);
+    const gs=Math.min((W-44)/bb.w, (H-56)/bb.h);
+    const L=gA.mm*gs;
+    // centraliza a caixa toda; a âncora é o centro óptico
+    const ancX = (W - bb.w*gs)/2 - (bb.x0 - bb.opticX)*gs;
+    const ancY = (H - bb.h*gs)/2 - (bb.y0 - bb.opticY)*gs;
+    // linha de visada real (horizontal, saindo da mira)
+    shctx.setLineDash([6,4]); shctx.strokeStyle='#4cc2ff'; shctx.lineWidth=1.6;
+    shctx.beginPath(); shctx.moveTo(12,ancY); shctx.lineTo(W-12,ancY); shctx.stroke(); shctx.setLineDash([]);
+    GUNART.drawGun(shctx, { ancX:ancX, ancY:ancY, phi:0, sightHmm:S.shMm,
+                            gun:S.gun, sight:S.sight, maxLen:L });
+    // cota da altura da mira
+    const bx = ancX + Math.abs(gA.opticX)*gs*0.35, by = ancY + S.shMm*gs;
+    shctx.strokeStyle='rgba(160,182,214,.7)'; shctx.lineWidth=1;
+    shctx.beginPath(); shctx.moveTo(bx,ancY); shctx.lineTo(bx,by); shctx.stroke();
+    shctx.beginPath(); shctx.moveTo(bx-3,ancY+5); shctx.lineTo(bx,ancY); shctx.lineTo(bx+3,ancY+5);
+    shctx.moveTo(bx-3,by-5); shctx.lineTo(bx,by); shctx.lineTo(bx+3,by-5); shctx.stroke();
+    shctx.fillStyle='#9fb0cc'; shctx.font='600 11px -apple-system,system-ui,sans-serif'; shctx.textAlign='left';
+    shctx.fillText(nf(S.shMm,0)+' mm', bx+6, (ancY+by)/2+4);
+    // eixo do cano
+    shctx.setLineDash([2,3]); shctx.strokeStyle='rgba(255,200,97,.8)'; shctx.lineWidth=1.3;
+    shctx.beginPath(); shctx.moveTo(12,by); shctx.lineTo(W-12,by); shctx.stroke(); shctx.setLineDash([]);
+    shctx.fillStyle='#4cc2ff'; shctx.font='600 10px -apple-system,system-ui,sans-serif';
+    shctx.fillText('linha de visada', 14, ancY-6);
+    shctx.fillStyle='#ffc861'; shctx.fillText('eixo do cano', 14, by+14);
+  });
+}
+
 let raf=0;
 function refresh(all){
   sortTargets();
   cancelAnimationFrame(raf);
-  raf=requestAnimationFrame(()=>{ draw(); renderStats(); renderTargets(); if(all!==false){ renderTable(); renderAim(); } });
+  raf=requestAnimationFrame(()=>{ if(S.view==='alvo'){ renderAim(); } else { draw(); renderStats(); } renderTargets(); if(all!==false){ renderTable(); } });
   save();
 }
 
@@ -1625,8 +1871,25 @@ let syncZChips;
 chipsInto($('#zChips'), [5,10,15,20,25,36,50,100,200], ()=>S.zero, v=>{S.zero=v; syncZ(); refresh();}, v=>v+' m');
 syncZChips = $('#zChips')._sync;
 
-const syncR = linkNum('#rN','#rR', ()=>S.range, v=>S.range=v);
-chipsInto($('#rChips'), [25,50,100,150,200,300], ()=>S.range, v=>{S.range=v; syncR(); refresh();}, v=>v+' m');
+const syncR = linkNum('#rN','#rR', ()=>S.range, v=>{ const tudo=Math.abs(S.vspan-S.range)<0.5; S.range=v; if(tudo){S.vx0=0;S.vspan=v;} clampView(); syncHz(); });
+chipsInto($('#rChips'), [25,50,100,150,200,300], ()=>S.range, v=>{ const tudo=Math.abs(S.vspan-S.range)<0.5; S.range=v; if(tudo){S.vx0=0;S.vspan=v;} clampView(); syncR(); syncHz(); refresh();}, v=>v+' m');
+
+// zoom horizontal: 0 = tudo, 100 = bem fechado
+function syncHz(){
+  clampView();
+  const f = Math.log(Math.max(2,S.range)/Math.max(2,S.vspan)) / Math.log(Math.max(2,S.range)/2);
+  $('#hzR').value = Math.round(clamp(f,0,1)*100);
+  $('#hzLbl').textContent = nf(S.vspan,0)+' m de '+nf(S.range,0)+' m';
+}
+$('#hzR').addEventListener('input', ()=>{
+  const f=parseFloat($('#hzR').value)/100;
+  const mid = S.vx0 + S.vspan/2;
+  S.vspan = clamp(S.range * Math.pow(2/Math.max(2,S.range), f), 2, S.range);
+  S.vx0 = clamp(mid - S.vspan/2, 0, Math.max(0,S.range-S.vspan));
+  $('#hzLbl').textContent = nf(S.vspan,0)+' m de '+nf(S.range,0)+' m';
+  refresh(false);
+});
+$('#hzAll').addEventListener('click', ()=>{ S.vx0=0; S.vspan=S.range; syncHz(); refresh(false); });
 
 $('#vzR').addEventListener('input', ()=>{ S.vauto=false; S.vzoom=parseFloat($('#vzR').value); refresh(false); });
 $('#vzAuto').addEventListener('click', ()=>{ S.vauto=true; S.vzoom=50; $('#vzR').value=50; refresh(false); });
@@ -1693,7 +1956,7 @@ $('#tgtPresets').addEventListener('click', e=>{
   if(ex>=0){ S.sel=ex; refresh(false); return; }
   if(S.targets.length>=8) S.targets.shift();
   S.targets.push(d); S.sel=S.targets.length-1;
-  if(d>S.range){ S.range=Math.ceil(d/25)*25; syncR(); }
+  if(d>S.range){ S.range=Math.ceil(d/25)*25; S.vspan=S.range; S.vx0=0; syncR(); syncHz(); }
   refresh();
 });
 $('#addTgt').addEventListener('click', ()=>{
@@ -1719,16 +1982,32 @@ $('#tgtList').addEventListener('input', e=>{
 /* --- tabela --- */
 $('#tbl').addEventListener('click', e=>{
   const tr=e.target.closest('tr'); if(!tr||!tr.dataset.d) return;
-  S.tblSel=parseFloat(tr.dataset.d); renderTable(); renderAim(); save();
+  S.tblSel=parseFloat(tr.dataset.d); renderTable(); renderAim(); save(); abrirAlvo(S.tblSel);
 });
 chipsInto($('#stepChips'), [1,2,5,10,25,50], ()=>S.step, v=>{S.step=v; renderTable();}, v=>v+' m');
+
+/* --- alternar curva / alvo --- */
+function aplicarView(){
+  const alvo = S.view==='alvo';
+  $('#cv').hidden = alvo;
+  $('#aimCv').hidden = !alvo;
+  $('#stats').hidden = alvo;
+  $('#aimbar').hidden = !alvo;
+  $$('#viewMode button').forEach(x=>x.classList.toggle('on', x.dataset.v===S.view));
+  const h=$('#vizhint'); if(h) h.style.display = alvo?'none':'';
+  if(alvo){ requestAnimationFrame(renderAim); } else { fitCanvas(); draw(); renderStats(); }
+}
+$('#viewMode').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  S.view=b.dataset.v; aplicarView(); save();
+});
 
 /* --- abas --- */
 $$('nav button').forEach(b=> b.addEventListener('click', ()=>{
   $$('nav button').forEach(x=>x.classList.toggle('on',x===b));
   $$('section').forEach(s=> s.classList.toggle('on', s.dataset.tab===b.dataset.tab));
   const m=$('main'); if(m) m.scrollTop=0;
-  if(b.dataset.tab==='tab'){ renderTable(); renderAim(); }
+  if(b.dataset.tab==='tab') renderTable();
 }));
 
 /* --- caixa de diálogo --- */
@@ -1844,7 +2123,7 @@ function syncAll(){
   syncGun(); syncSh(); syncShChips(); syncZ(); syncZChips(); syncR();
   syncGr(); syncBc(); syncV(); syncPf(); syncBbl(); syncT(); syncA(); syncU(); syncTol();
   $('#ammoSel').value=S.ammo;
-  $('#vzR').value=S.vzoom;
+  $('#vzR').value=S.vzoom; clampView(); syncHz(); aplicarView();
   $$('#velMode button').forEach(x=>x.classList.toggle('on', x.dataset.m===S.velMode));
   $$('#aimMode button').forEach(x=>x.classList.toggle('on', x.dataset.m===S.aimMode));
   $('#fldFps').style.display = S.velMode==='fps'?'':'none';
@@ -1865,7 +2144,7 @@ function boot(){
   try{ fitCanvas(); syncAll(); renderProfs(); refresh(); }
   catch(e){ showBootError(e); throw e; }
 }
-let rz; window.addEventListener('resize', ()=>{ clearTimeout(rz); rz=setTimeout(()=>{ fitCanvas(); refresh(false); },120); });
+let rz; window.addEventListener('resize', ()=>{ clearTimeout(rz); rz=setTimeout(()=>{ fitCanvas(); refresh(false); if(S.view==='alvo') renderAim(); },120); });
 window.addEventListener('orientationchange', ()=> setTimeout(()=>{ fitCanvas(); refresh(false); },320));
 document.addEventListener('gesturestart', e=>e.preventDefault());
 if(document.readyState!=='loading') boot(); else document.addEventListener('DOMContentLoaded', boot);
